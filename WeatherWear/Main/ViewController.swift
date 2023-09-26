@@ -35,9 +35,7 @@ class ViewController: UIViewController {
     }
 
     @objc func clickBtn() {
-        print("pressdComplete")
-        let profileVC = FeedbackViewController()
-        profileVC.modalPresentationStyle = .fullScreen
-        present(profileVC, animated: true)
+        guard let FeedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
+        self.navigationController?.pushViewController(FeedbackViewController, animated: true)
     }
 }
