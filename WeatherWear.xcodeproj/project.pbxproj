@@ -18,6 +18,9 @@
 		154101132AC1A97600828CB3 /* ClotheInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101122AC1A97600828CB3 /* ClotheInfo.swift */; };
 		154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */; };
 		154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101162AC1A9C000828CB3 /* UserInfo.swift */; };
+		686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */; };
+		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
+		689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C32AC26010005BA3A2 /* TapbarController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		154101122AC1A97600828CB3 /* ClotheInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClotheInfo.swift; sourceTree = "<group>"; };
 		154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoriesInfo.swift; sourceTree = "<group>"; };
 		154101162AC1A9C000828CB3 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewController.swift; sourceTree = SOURCE_ROOT; };
+		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
+		689BC5C32AC26010005BA3A2 /* TapbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapbarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +82,7 @@
 				154100FF2AC1A69B00828CB3 /* LaunchScreen.storyboard */,
 				154101022AC1A69B00828CB3 /* Info.plist */,
 				154101082AC1A6E600828CB3 /* .gitignore */,
+				689BC5C32AC26010005BA3A2 /* TapbarController.swift */,
 			);
 			path = WeatherWear;
 			sourceTree = "<group>";
@@ -99,6 +106,7 @@
 		1541010C2AC1A86600828CB3 /* WeeklyWear */ = {
 			isa = PBXGroup;
 			children = (
+				689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */,
 			);
 			path = WeeklyWear;
 			sourceTree = "<group>";
@@ -106,6 +114,7 @@
 		1541010D2AC1A89A00828CB3 /* FeedbackPage */ = {
 			isa = PBXGroup;
 			children = (
+				686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */,
 			);
 			path = FeedbackPage;
 			sourceTree = "<group>";
@@ -202,7 +211,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */,
+				689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */,
 				154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */,
+				686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */,
 				154101102AC1A91600828CB3 /* WeatherInfo.swift in Sources */,
 				154100F92AC1A69900828CB3 /* ViewController.swift in Sources */,
 				154100F52AC1A69900828CB3 /* AppDelegate.swift in Sources */,
