@@ -18,6 +18,8 @@
 		154101132AC1A97600828CB3 /* ClotheInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101122AC1A97600828CB3 /* ClotheInfo.swift */; };
 		154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */; };
 		154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101162AC1A9C000828CB3 /* UserInfo.swift */; };
+		154A77E12AC2A44000F94630 /* FeedbackPage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154A77E02AC2A44000F94630 /* FeedbackPage.storyboard */; };
+		154A77E32AC2A44A00F94630 /* FeedbackPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A77E22AC2A44A00F94630 /* FeedbackPageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		154101122AC1A97600828CB3 /* ClotheInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClotheInfo.swift; sourceTree = "<group>"; };
 		154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoriesInfo.swift; sourceTree = "<group>"; };
 		154101162AC1A9C000828CB3 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		154A77E02AC2A44000F94630 /* FeedbackPage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = FeedbackPage.storyboard; path = WeatherWear/FeedbackPage.storyboard; sourceTree = SOURCE_ROOT; };
+		154A77E22AC2A44A00F94630 /* FeedbackPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FeedbackPageViewController.swift; path = WeatherWear/FeedbackPageViewController.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,8 @@
 		1541010D2AC1A89A00828CB3 /* FeedbackPage */ = {
 			isa = PBXGroup;
 			children = (
+				154A77E22AC2A44A00F94630 /* FeedbackPageViewController.swift */,
+				154A77E02AC2A44000F94630 /* FeedbackPage.storyboard */,
 			);
 			path = FeedbackPage;
 			sourceTree = "<group>";
@@ -188,6 +194,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				154A77E12AC2A44000F94630 /* FeedbackPage.storyboard in Resources */,
 				154101092AC1A6E600828CB3 /* .gitignore in Resources */,
 				154101012AC1A69B00828CB3 /* LaunchScreen.storyboard in Resources */,
 				154100FE2AC1A69B00828CB3 /* Assets.xcassets in Resources */,
@@ -202,6 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				154A77E32AC2A44A00F94630 /* FeedbackPageViewController.swift in Sources */,
 				154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */,
 				154101102AC1A91600828CB3 /* WeatherInfo.swift in Sources */,
 				154100F92AC1A69900828CB3 /* ViewController.swift in Sources */,
