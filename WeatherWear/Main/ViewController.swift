@@ -35,7 +35,8 @@ class ViewController: UIViewController {
     }
 
     @objc func clickBtn() {
-        guard let FeedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
-        self.navigationController?.pushViewController(FeedbackViewController, animated: true)
+//        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
+        let feedbackViewController = FeedbackViewController()
+        self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
 }
