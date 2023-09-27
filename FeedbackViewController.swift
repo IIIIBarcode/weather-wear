@@ -9,14 +9,22 @@ import UIKit
 import SnapKit
 
 class FeedbackViewController: UIViewController {
+    var satisfyButton: UIButton!
+    var dissatisfyButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         ConfigureUI()
         // Do any additional setup after loading the view.
     }
     
+    func setBackgroundImage() {
+        if let backgroundImage = UIImage(named: "backgroundSample") {
+            self.view.layer.contents = backgroundImage.cgImage
+        }
+    }
     
     func ConfigureUI() {
+        setBackgroundImage()
         view.backgroundColor = .black
         let iconImage = UIImageView()
         view.addSubview(iconImage)
@@ -102,7 +110,7 @@ class FeedbackViewController: UIViewController {
             make.height.equalTo(60)
         }
         
-        let satisfyButton = UIButton()
+        satisfyButton = UIButton()
         view.addSubview(satisfyButton)
         satisfyButton.backgroundColor = .systemGray
         satisfyButton.setTitle("a. 만족해요", for: .normal)
@@ -115,7 +123,7 @@ class FeedbackViewController: UIViewController {
             make.height.equalTo(60)
         }
         
-        let dissatisfyButton = UIButton()
+        dissatisfyButton = UIButton()
         view.addSubview(dissatisfyButton)
         dissatisfyButton.backgroundColor = .systemGray
         dissatisfyButton.setTitle("b. 아쉬워요", for: .normal)
@@ -140,9 +148,69 @@ class FeedbackViewController: UIViewController {
             make.width.equalTo(280)
             make.height.equalTo(60)
         }
-        
-        
-        
+        satisfyButton.addTarget(self, action: #selector(satisfyButtonClick), for: .touchUpInside)
+        dissatisfyButton.addTarget(self, action: #selector(dissatisfyButtonClick), for: .touchUpInside)
+        confirmButton.addTarget(self, action: #selector(confirmButtonClick), for: .touchUpInside)
     }
-
+    @objc func satisfyButtonClick(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        if sender.isSelected {
+            sender.backgroundColor = .white
+            sender.setTitleColor(.black, for: .normal)
+            dissatisfyButton.isSelected = false
+            dissatisfyButton.backgroundColor = .systemGray
+            dissatisfyButton.setTitleColor(.white, for: .normal)
+        }
+        else {
+            sender.backgroundColor = .systemGray
+            sender.setTitleColor(.white, for: .normal)
+        }
+    }
+    
+    
+    @objc func dissatisfyButtonClick(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        if sender.isSelected {
+            sender.backgroundColor = .white
+            sender.setTitleColor(.black, for: .normal)
+            satisfyButton.isSelected = false
+            satisfyButton.backgroundColor = .systemGray
+            satisfyButton.setTitleColor(.white, for: .normal)
+        }
+        else {
+            sender.backgroundColor = .systemGray
+            sender.setTitleColor(.white, for: .normal)
+        }
+    }
+    
+    @objc func confirmButtonClick(_ sender: UIButton) {
+        if satisfyButton.isSelected {
+            self.navigationController?.popViewController(animated: true)
+            
+        }
+        else if dissatisfyButton.isSelected {
+            let surveyViewController = SurveyViewController()
+            navigationController?.pushViewController(surveyViewController, animated: true)
+        }
+        else {
+            showToast(message: "항목을 선택해주세요")
+        }
+    }
+    func showToast(message : String, font: UIFont = UIFont.systemFont(ofSize: 14.0)) {
+            let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+            toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+            toastLabel.textColor = UIColor.white
+            toastLabel.font = font
+            toastLabel.textAlignment = .center;
+            toastLabel.text = message
+            toastLabel.alpha = 1.0
+            toastLabel.layer.cornerRadius = 10;
+            toastLabel.clipsToBounds  =  true
+            self.view.addSubview(toastLabel)
+            UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+                 toastLabel.alpha = 0.0
+            }, completion: {(isCompleted) in
+                toastLabel.removeFromSuperview()
+            })
+        }
 }

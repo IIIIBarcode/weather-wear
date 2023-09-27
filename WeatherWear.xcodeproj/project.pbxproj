@@ -19,6 +19,7 @@
 		154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */; };
 		154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101162AC1A9C000828CB3 /* UserInfo.swift */; };
 		154A77E82AC2FA7000F94630 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 154A77E72AC2FA7000F94630 /* SnapKit */; };
+		154A780C2AC43AFA00F94630 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A780B2AC43AFA00F94630 /* SurveyViewController.swift */; };
 		686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */; };
 		686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */; };
 		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
@@ -40,6 +41,7 @@
 		154101122AC1A97600828CB3 /* ClotheInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClotheInfo.swift; sourceTree = "<group>"; };
 		154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoriesInfo.swift; sourceTree = "<group>"; };
 		154101162AC1A9C000828CB3 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		154A780B2AC43AFA00F94630 /* SurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyViewController.swift; sourceTree = "<group>"; };
 		686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewController.swift; sourceTree = SOURCE_ROOT; };
 		686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTableViewCell.swift; sourceTree = "<group>"; };
 		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */,
+				154A780B2AC43AFA00F94630 /* SurveyViewController.swift */,
 			);
 			path = FeedbackPage;
 			sourceTree = "<group>";
@@ -236,6 +239,7 @@
 				154101132AC1A97600828CB3 /* ClotheInfo.swift in Sources */,
 				D8F30C222AC4676B0026351D /* Weather Cell.swift in Sources */,
 				154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */,
+				154A780C2AC43AFA00F94630 /* SurveyViewController.swift in Sources */,
 				154100F72AC1A69900828CB3 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
