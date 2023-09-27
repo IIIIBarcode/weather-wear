@@ -8,6 +8,27 @@
 import SnapKit
 import UIKit
 class WeeklyWearViewController: UIViewController {
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        searchBar.barStyle = .default
+        searchBar.tintColor = .white
+
+        // 텍스트필드의 text, placeholder, 및 background 설정
+        if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+
+            // 돋보기 아이콘 색상
+            let glassIconView = textField.leftView as? UIImageView
+            glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
+            glassIconView?.tintColor = .white
+        }
+
+        return searchBar
+    }()
+
     lazy var location: UILabel = {
         let lb = UILabel()
         lb.text = "서울특별시"
@@ -28,24 +49,20 @@ class WeeklyWearViewController: UIViewController {
     }()
 
     lazy var isMetricBtn: UISegmentedControl = {
-        let seg = UISegmentedControl(items: ["섭씨", "화씨"])
+        let seg = UISegmentedControl(items: ["°C", "°F"])
         seg.tintColor = .white
         seg.selectedSegmentTintColor = .white
         seg.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         view.addSubview(seg)
         seg.selectedSegmentIndex = 0
+        // 선택되지 않은 부분 설정
+        let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        seg.setTitleTextAttributes(textAttributes, for: .normal)
+        // 선택된 부분 설정
+        let selectedTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        seg.setTitleTextAttributes(selectedTextAttributes, for: .selected)
 
         return seg
-    }()
-
-    let searchController: UISearchController = {
-        let serch = UISearchController(searchResultsController: nil)
-
-        serch.obscuresBackgroundDuringPresentation = false
-        serch.searchBar.placeholder = "Search"
-        serch.searchBar.tintColor = .white
-
-        return serch
     }()
 
     lazy var weakTable: UITableView = {
@@ -74,7 +91,7 @@ extension WeeklyWearViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeekCell", for: indexPath) as! WeeklyTableViewCell // 사용자 정의 셀 클래스로 캐스팅해야 합니다.
-
+        cell.selectionStyle = .none
         return cell
     }
 
@@ -94,6 +111,7 @@ extension WeeklyWearViewController {
         weakTable.register(WeeklyTableViewCell.self, forCellReuseIdentifier: "WeekCell")
         weakTable.dataSource = self
         weakTable.delegate = self
+        navigationItem.titleView = searchBar
     }
 
     func setBackgroundImage() {
@@ -125,8 +143,5 @@ extension WeeklyWearViewController {
             make.trailing.equalTo(-20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
-        navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.searchController = searchController
-        definesPresentationContext = false
     }
 }
