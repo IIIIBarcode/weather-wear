@@ -196,7 +196,22 @@ class ViewController: UIViewController {
         return label
     }()
     
+    private lazy var feedbackButton: UIButton = {
+        let btn = UIButton()
+        btn.addTarget(self, action: #selector(clickBtn), for: .touchUpInside)
+        btn.setTitle("피드백페이지이동", for: .normal)
+        btn.backgroundColor = .yellow
+        btn.setTitleColor(.black, for: .normal)
+        view.addSubview(btn)
+        return btn
+    }()
     
+    
+    @objc func clickBtn() {
+   //        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
+        let feedbackViewController = FeedbackViewController()
+        self.navigationController?.pushViewController(feedbackViewController, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -232,6 +247,7 @@ class ViewController: UIViewController {
         weatherInfoContainerView.addSubview(weatherStackView)
         
         weatherInfoContainerView.addSubview(weatherCommentLabel)
+        self.view.addSubview(feedbackButton)
         
         setupConstraints()
     }
@@ -318,6 +334,11 @@ class ViewController: UIViewController {
             make.top.equalTo(weatherIconImageView.snp.bottom).offset(10)
             make.leading.trailing.equalTo(weatherInfoContainerView).inset(20)
             make.bottom.equalTo(weatherInfoContainerView).offset(-10)
+        }
+        
+        feedbackButton.snp.makeConstraints { make in
+            make.top.equalTo(weatherCommentLabel.snp.bottom).offset(30)
+            make.centerX.equalToSuperview()
         }
     }
 }
