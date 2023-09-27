@@ -9,6 +9,17 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -56,6 +67,7 @@ class ViewController: UIViewController {
     private let temperatureSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["⠀⠀⠀°C⠀⠀⠀", "⠀⠀⠀°F⠀⠀⠀"])
         segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.backgroundColor = .white.withAlphaComponent(0.15)
         
         // 선택되지 않은 부분 설정
         let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
@@ -67,7 +79,7 @@ class ViewController: UIViewController {
         
         return segmentedControl
     }()
-        
+    
     // 최고 온도 레이블
     private let highestTemperatureLabel: UILabel = {
         let label = UILabel()
@@ -207,15 +219,30 @@ class ViewController: UIViewController {
     }()
     
     
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: self.view.frame.width / 8, height: 120)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(WeatherHourCell.self, forCellWithReuseIdentifier: "WeatherHourCell")
+        return collectionView
+    }()
+    
+    
+    
     @objc func clickBtn() {
-   //        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
+        //        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
         let feedbackViewController = FeedbackViewController()
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-            setupUI()
+        setupUI()
     }
     
     
@@ -228,32 +255,51 @@ class ViewController: UIViewController {
     
     func setupUI() {
         setBackgroundImage()
+//        self.edgesForExtendedLayout = []
+
         
         //        self.view.backgroundColor = .black
-        
-        self.view.addSubview(searchBar)
-        self.view.addSubview(locationLabel)
-        self.view.addSubview(gpsButton)
-        self.view.addSubview(temperatureLabel)
-        self.view.addSubview(temperatureSegmentedControl)
-        self.view.addSubview(highestTemperatureLabel)
-        self.view.addSubview(lowestTemperatureLabel)
-        self.view.addSubview(clothesTitleLabel)
-        self.view.addSubview(clothesItemsLabel)
-        self.view.addSubview(belongingsTitleLabel)
-        self.view.addSubview(belongingsItemsLabel)
-        self.view.addSubview(separatorView)
-        self.view.addSubview(weatherInfoContainerView)
+        self.view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(searchBar)
+        contentView.addSubview(locationLabel)
+        contentView.addSubview(gpsButton)
+        contentView.addSubview(temperatureLabel)
+        contentView.addSubview(temperatureSegmentedControl)
+        contentView.addSubview(highestTemperatureLabel)
+        contentView.addSubview(lowestTemperatureLabel)
+        contentView.addSubview(clothesTitleLabel)
+        contentView.addSubview(clothesItemsLabel)
+        contentView.addSubview(belongingsTitleLabel)
+        contentView.addSubview(belongingsItemsLabel)
+        contentView.addSubview(separatorView)
+        contentView.addSubview(weatherInfoContainerView)
         weatherInfoContainerView.addSubview(weatherStackView)
         
         weatherInfoContainerView.addSubview(weatherCommentLabel)
-        self.view.addSubview(feedbackButton)
+        contentView.addSubview(feedbackButton)
+        contentView.addSubview(collectionView)
+        
         
         setupConstraints()
     }
     
     
     func setupConstraints() {
+        scrollView.snp.makeConstraints { make in
+            
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.edges.equalTo(scrollView)
+            make.width.equalTo(self.view)
+            make.bottom.equalTo(scrollView)
+        }
+        
+        
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview().inset(16)
@@ -336,9 +382,31 @@ class ViewController: UIViewController {
             make.bottom.equalTo(weatherInfoContainerView).offset(-10)
         }
         
-        feedbackButton.snp.makeConstraints { make in
-            make.top.equalTo(weatherCommentLabel.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
+        
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(weatherInfoContainerView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(120)
         }
+        
+        feedbackButton.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.bottom).offset(30)
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(contentView.snp.bottom).offset(-20)
+        }
+    }
+}
+
+extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 8 // 0-24시를 3시간 간격으로 표시하므로 8개의 아이템이 필요합니다.
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeatherHourCell", for: indexPath) as! WeatherHourCell
+        // 시간을 3시간 간격으로 설정
+        cell.setHour(indexPath.item * 3)
+        return cell
     }
 }
