@@ -94,8 +94,8 @@ class WeeklyTableViewCell: UITableViewCell {
     lazy var clothesView: UIView = {
         let vw = UIView()
         vw.addSubview(clothes)
-//        contentView.addSubview(vw)
-        vw.backgroundColor = .gray
+        vw.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+
         vw.layer.cornerRadius = 10
 
         return vw
@@ -114,8 +114,8 @@ class WeeklyTableViewCell: UITableViewCell {
     lazy var accessoriesView: UIView = {
         let vw = UIView()
         vw.addSubview(accessories)
-//        contentView.addSubview(vw)
-        vw.backgroundColor = .gray
+        vw.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+
         vw.layer.cornerRadius = 10
 
         return vw

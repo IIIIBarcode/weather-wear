@@ -31,8 +31,10 @@ class WeeklyWearViewController: UIViewController {
         let seg = UISegmentedControl(items: ["섭씨", "화씨"])
         seg.tintColor = .white
         seg.selectedSegmentTintColor = .white
-        seg.backgroundColor = .gray
+        seg.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         view.addSubview(seg)
+        seg.selectedSegmentIndex = 0
+
         return seg
     }()
 
@@ -42,6 +44,7 @@ class WeeklyWearViewController: UIViewController {
         serch.obscuresBackgroundDuringPresentation = false
         serch.searchBar.placeholder = "Search"
         serch.searchBar.tintColor = .white
+
         return serch
     }()
 
@@ -54,11 +57,9 @@ class WeeklyWearViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .darkGray
-        weakTable.dataSource = self
-        weakTable.delegate = self
-        weakTable.register(WeeklyTableViewCell.self, forCellReuseIdentifier: "WeekCell")
         makeUi()
+        setBackgroundImage()
+        setting()
     }
 }
 
@@ -68,7 +69,7 @@ extension WeeklyWearViewController: UISearchResultsUpdating {
 
 extension WeeklyWearViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 5
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -89,6 +90,18 @@ extension WeeklyWearViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension WeeklyWearViewController {
+    func setting() {
+        weakTable.register(WeeklyTableViewCell.self, forCellReuseIdentifier: "WeekCell")
+        weakTable.dataSource = self
+        weakTable.delegate = self
+    }
+
+    func setBackgroundImage() {
+        if let backgroundImage = UIImage(named: "backgroundSample") {
+            view.layer.contents = backgroundImage.cgImage
+        }
+    }
+
     func makeUi() {
         location.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -113,8 +126,6 @@ extension WeeklyWearViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         navigationItem.hidesSearchBarWhenScrolling = false
-
-        // Add the search bar to the navigation bar
         navigationItem.searchController = searchController
         definesPresentationContext = false
     }
