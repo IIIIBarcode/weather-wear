@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 
 class ViewController: UIViewController {
     private lazy var scrollView: UIScrollView = {
@@ -208,17 +207,6 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private lazy var feedbackButton: UIButton = {
-        let btn = UIButton()
-        btn.addTarget(self, action: #selector(clickBtn), for: .touchUpInside)
-        btn.setTitle("피드백페이지이동", for: .normal)
-        btn.backgroundColor = .yellow
-        btn.setTitleColor(.black, for: .normal)
-        view.addSubview(btn)
-        return btn
-    }()
-    
-    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -231,6 +219,44 @@ class ViewController: UIViewController {
         collectionView.register(WeatherHourCell.self, forCellWithReuseIdentifier: "WeatherHourCell")
         return collectionView
     }()
+    
+    private lazy var feedbackButton: UIButton = {
+        let btn = UIButton()
+        btn.addTarget(self, action: #selector(clickBtn), for: .touchUpInside)
+        btn.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        btn.layer.cornerRadius = 10
+        btn.setTitleColor(.white, for: .normal)
+        view.addSubview(btn)
+        return btn
+    }()
+    
+    private let iconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "dashicons_welcome-write-blog")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private let feedbackRecommendationLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .white
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+        
+        let attributedString = NSAttributedString(
+            string: "오늘의 추천 옷차림은 어떠셨나요?\n피드백을 남기고 나에게 꼭 맞는 옷차림 추천을 받아보세요 (클릭하여 설문 작성)",
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
+        label.attributedText = attributedString
+        
+        label.font = UIFont.systemFont(ofSize: 14)
+        return label
+    }()
+    
+    
+   
     
     
     
@@ -246,19 +272,38 @@ class ViewController: UIViewController {
     }
     
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.contentSize = CGSize(width: contentView.frame.width, height: feedbackButton.frame.maxY)
+    }
+    
+    
     func setBackgroundImage() {
         if let backgroundImage = UIImage(named: "backgroundSample") {
             self.view.layer.contents = backgroundImage.cgImage
         }
     }
     
+    func setupNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.tintColor = .white
+    }
+    
     
     func setupUI() {
         setBackgroundImage()
-//        self.edgesForExtendedLayout = []
-
-        
-        //        self.view.backgroundColor = .black
+        setupNavigationBarAppearance()
+       
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(searchBar)
@@ -275,137 +320,181 @@ class ViewController: UIViewController {
         contentView.addSubview(separatorView)
         contentView.addSubview(weatherInfoContainerView)
         weatherInfoContainerView.addSubview(weatherStackView)
-        
         weatherInfoContainerView.addSubview(weatherCommentLabel)
         contentView.addSubview(feedbackButton)
         contentView.addSubview(collectionView)
-        
+        self.view.bringSubviewToFront(scrollView)
+        contentView.addSubview(feedbackButton)
+        feedbackButton.addSubview(iconImageView)
+        feedbackButton.addSubview(feedbackRecommendationLabel)
+        scrollView.contentInsetAdjustmentBehavior = .never
         
         setupConstraints()
     }
     
     
     func setupConstraints() {
-        scrollView.snp.makeConstraints { make in
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
             
-            make.top.equalToSuperview()
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
+            scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+        ])
         
-        contentView.snp.makeConstraints { make in
-            make.edges.equalTo(scrollView)
-            make.width.equalTo(self.view)
-            make.bottom.equalTo(scrollView)
-        }
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: feedbackButton.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
         
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 54),
+            searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
+            searchBar.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10)
+        ])
         
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
+        locationLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            locationLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 30),
+            locationLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
+        ])
         
-        locationLabel.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(30)
-            make.leading.equalToSuperview().inset(20)
-        }
+        gpsButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            gpsButton.centerYAnchor.constraint(equalTo: locationLabel.centerYAnchor),
+            gpsButton.leadingAnchor.constraint(equalTo: locationLabel.trailingAnchor, constant: 10)
+        ])
         
-        gpsButton.snp.makeConstraints { make in
-            make.centerY.equalTo(locationLabel)
-            make.leading.equalTo(locationLabel.snp.trailing).offset(10)
-        }
+        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            temperatureLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor),
+            temperatureLabel.leadingAnchor.constraint(equalTo: locationLabel.leadingAnchor)
+        ])
         
-        temperatureLabel.snp.makeConstraints { make in
-            make.top.equalTo(locationLabel.snp.bottom)
-            make.leading.equalTo(searchBar)
-        }
+        temperatureSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            temperatureSegmentedControl.bottomAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: -20),
+            temperatureSegmentedControl.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
+        ])
         
-        temperatureSegmentedControl.snp.makeConstraints { make in
-            make.bottom.equalTo(temperatureLabel.snp.bottom).offset(-20)
-            make.trailing.equalToSuperview().inset(20)
-        }
+        lowestTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            lowestTemperatureLabel.bottomAnchor.constraint(equalTo: temperatureSegmentedControl.topAnchor, constant: -10),
+            lowestTemperatureLabel.trailingAnchor.constraint(equalTo: temperatureSegmentedControl.trailingAnchor)
+        ])
         
-        lowestTemperatureLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(temperatureSegmentedControl.snp.top).offset(-10)
-            make.trailing.equalTo(temperatureSegmentedControl)
-        }
+        highestTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            highestTemperatureLabel.bottomAnchor.constraint(equalTo: lowestTemperatureLabel.topAnchor, constant: -5),
+            highestTemperatureLabel.trailingAnchor.constraint(equalTo: temperatureSegmentedControl.trailingAnchor)
+        ])
         
-        highestTemperatureLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(lowestTemperatureLabel.snp.top).offset(-5)
-            make.trailing.equalTo(temperatureSegmentedControl)
-        }
+        clothesTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            clothesTitleLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 30),
+            clothesTitleLabel.leadingAnchor.constraint(equalTo: locationLabel.leadingAnchor, constant: 5)
+        ])
         
-        clothesTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(temperatureLabel.snp.bottom).offset(30)
-            make.leading.equalTo(searchBar).offset(10)
-        }
+        clothesItemsLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            clothesItemsLabel.topAnchor.constraint(equalTo: clothesTitleLabel.bottomAnchor, constant: 10),
+            clothesItemsLabel.leadingAnchor.constraint(equalTo: clothesTitleLabel.leadingAnchor)
+        ])
         
-        clothesItemsLabel.snp.makeConstraints { make in
-            make.top.equalTo(clothesTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(clothesTitleLabel)
-        }
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            separatorView.topAnchor.constraint(equalTo: clothesTitleLabel.topAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: clothesItemsLabel.bottomAnchor),
+            separatorView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            separatorView.widthAnchor.constraint(equalToConstant: 1)
+        ])
         
-        separatorView.snp.makeConstraints { make in
-            make.top.equalTo(clothesTitleLabel)
-            make.bottom.equalTo(clothesItemsLabel)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(1)
-        }
+        belongingsTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            belongingsTitleLabel.topAnchor.constraint(equalTo: clothesTitleLabel.topAnchor),
+            belongingsTitleLabel.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor, constant: 30)
+        ])
         
-        belongingsTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(clothesTitleLabel)
-            make.leading.equalTo(separatorView.snp.trailing).offset(30)
-        }
+        belongingsItemsLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            belongingsItemsLabel.topAnchor.constraint(equalTo: belongingsTitleLabel.bottomAnchor, constant: 10),
+            belongingsItemsLabel.leadingAnchor.constraint(equalTo: belongingsTitleLabel.leadingAnchor)
+        ])
         
-        belongingsItemsLabel.snp.makeConstraints { make in
-            make.top.equalTo(belongingsTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(belongingsTitleLabel)
-        }
+        weatherInfoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            weatherInfoContainerView.topAnchor.constraint(equalTo: clothesItemsLabel.bottomAnchor, constant: 30),
+            weatherInfoContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            weatherInfoContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
+        ])
         
-        weatherInfoContainerView.snp.makeConstraints { make in
-            make.top.equalTo(clothesItemsLabel.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
+        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            weatherStackView.topAnchor.constraint(equalTo: weatherInfoContainerView.topAnchor, constant: 10),
+            weatherStackView.centerXAnchor.constraint(equalTo: weatherInfoContainerView.centerXAnchor)
+        ])
         
-        weatherStackView.snp.makeConstraints { make in
-            make.top.equalTo(weatherInfoContainerView).offset(10)
-            make.centerX.equalTo(weatherInfoContainerView)
-        }
+        weatherIconImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            weatherIconImageView.widthAnchor.constraint(equalToConstant: 25),
+            weatherIconImageView.heightAnchor.constraint(equalToConstant: 25)
+        ])
         
-        weatherIconImageView.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 25, height: 25))
-        }
+        weatherCommentLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            weatherCommentLabel.topAnchor.constraint(equalTo: weatherIconImageView.bottomAnchor, constant: 10),
+            weatherCommentLabel.leadingAnchor.constraint(equalTo: weatherInfoContainerView.leadingAnchor, constant: 20),
+            weatherCommentLabel.trailingAnchor.constraint(equalTo: weatherInfoContainerView.trailingAnchor, constant: -20),
+            weatherCommentLabel.bottomAnchor.constraint(equalTo: weatherInfoContainerView.bottomAnchor, constant: -10)
+        ])
         
-        weatherCommentLabel.snp.makeConstraints { make in
-            make.top.equalTo(weatherIconImageView.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(weatherInfoContainerView).inset(20)
-            make.bottom.equalTo(weatherInfoContainerView).offset(-10)
-        }
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: weatherInfoContainerView.bottomAnchor, constant: 20),
+            collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 120)
+        ])
         
+        feedbackButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            feedbackButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 25),
+            feedbackButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            feedbackButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+            feedbackButton.heightAnchor.constraint(equalToConstant: 100)
+        ])
         
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            iconImageView.leadingAnchor.constraint(equalTo: feedbackButton.leadingAnchor, constant: 10),
+            iconImageView.centerYAnchor.constraint(equalTo: feedbackButton.centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 47),
+            iconImageView.heightAnchor.constraint(equalToConstant: 47)
+        ])
         
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(weatherInfoContainerView.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(120)
-        }
-        
-        feedbackButton.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(contentView.snp.bottom).offset(-20)
-        }
+        feedbackRecommendationLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            feedbackRecommendationLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 10),
+            feedbackRecommendationLabel.centerYAnchor.constraint(equalTo: feedbackButton.centerYAnchor),
+            feedbackRecommendationLabel.trailingAnchor.constraint(equalTo: feedbackButton.trailingAnchor, constant: -10)
+        ])
     }
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 8 // 0-24시를 3시간 간격으로 표시하므로 8개의 아이템이 필요합니다.
+        return 8
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeatherHourCell", for: indexPath) as! WeatherHourCell
-        // 시간을 3시간 간격으로 설정
+        
         cell.setHour(indexPath.item * 3)
         return cell
     }

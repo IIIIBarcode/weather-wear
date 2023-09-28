@@ -59,7 +59,7 @@ class WeatherHourCell: UICollectionViewCell {
         weatherIconImageView.snp.makeConstraints { make in
             make.top.equalTo(hourLabel.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(40)
+            make.width.height.equalTo(30)
         }
         
         temperatureLabel.snp.makeConstraints { make in
