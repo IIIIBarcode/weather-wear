@@ -24,6 +24,7 @@
 		686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */; };
 		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
 		689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C32AC26010005BA3A2 /* TapbarController.swift */; };
+		D8F30C222AC4676B0026351D /* Weather Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F30C212AC4676B0026351D /* Weather Cell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTableViewCell.swift; sourceTree = "<group>"; };
 		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
 		689BC5C32AC26010005BA3A2 /* TapbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapbarController.swift; sourceTree = "<group>"; };
+		D8F30C212AC4676B0026351D /* Weather Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Weather Cell.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 			children = (
 				154100FA2AC1A69900828CB3 /* Main.storyboard */,
 				154100F82AC1A69900828CB3 /* ViewController.swift */,
+				D8F30C212AC4676B0026351D /* Weather Cell.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 				686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */,
 				154100F52AC1A69900828CB3 /* AppDelegate.swift in Sources */,
 				154101132AC1A97600828CB3 /* ClotheInfo.swift in Sources */,
+				D8F30C222AC4676B0026351D /* Weather Cell.swift in Sources */,
 				154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */,
 				154A780C2AC43AFA00F94630 /* SurveyViewController.swift in Sources */,
 				154100F72AC1A69900828CB3 /* SceneDelegate.swift in Sources */,
