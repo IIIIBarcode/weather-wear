@@ -15,10 +15,19 @@ class TapbarController: UITabBarController {
     }
 
     private func tabBarSetting() {
+        // 기존의 설정
         self.tabBar.backgroundColor = .clear
         self.modalPresentationStyle = .fullScreen
         self.tabBar.unselectedItemTintColor = .systemGray
         self.tabBar.tintColor = .white
+
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundEffect = nil
+        appearance.shadowColor = nil 
+
+        self.tabBar.standardAppearance = appearance
+        self.tabBar.scrollEdgeAppearance = appearance
     }
 
     private func viewControllerSetting() {
