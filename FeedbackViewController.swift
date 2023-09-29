@@ -112,7 +112,7 @@ class FeedbackViewController: UIViewController {
         
         satisfyButton = UIButton()
         view.addSubview(satisfyButton)
-        satisfyButton.backgroundColor = .lightText
+        satisfyButton.backgroundColor = .separator
         satisfyButton.setTitle("a. 만족해요", for: .normal)
         satisfyButton.setTitleColor(.white, for: .normal)
         satisfyButton.layer.cornerRadius = 10
@@ -125,7 +125,7 @@ class FeedbackViewController: UIViewController {
         
         dissatisfyButton = UIButton()
         view.addSubview(dissatisfyButton)
-        dissatisfyButton.backgroundColor = .lightText
+        dissatisfyButton.backgroundColor = .separator
         dissatisfyButton.setTitle("b. 아쉬워요", for: .normal)
         dissatisfyButton.setTitleColor(.white, for: .normal)
         dissatisfyButton.layer.cornerRadius = 10
@@ -158,11 +158,11 @@ class FeedbackViewController: UIViewController {
             sender.backgroundColor = .white
             sender.setTitleColor(.black, for: .normal)
             dissatisfyButton.isSelected = false
-            dissatisfyButton.backgroundColor = .lightText
+            dissatisfyButton.backgroundColor = .separator
             dissatisfyButton.setTitleColor(.white, for: .normal)
         }
         else {
-            sender.backgroundColor = .lightText
+            sender.backgroundColor = .separator
             sender.setTitleColor(.white, for: .normal)
         }
     }
@@ -174,11 +174,11 @@ class FeedbackViewController: UIViewController {
             sender.backgroundColor = .white
             sender.setTitleColor(.black, for: .normal)
             satisfyButton.isSelected = false
-            satisfyButton.backgroundColor = .lightText
+            satisfyButton.backgroundColor = .separator
             satisfyButton.setTitleColor(.white, for: .normal)
         }
         else {
-            sender.backgroundColor = .lightText
+            sender.backgroundColor = .separator
             sender.setTitleColor(.white, for: .normal)
         }
     }

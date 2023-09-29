@@ -20,6 +20,8 @@
 		154101172AC1A9C000828CB3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154101162AC1A9C000828CB3 /* UserInfo.swift */; };
 		154A77E82AC2FA7000F94630 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 154A77E72AC2FA7000F94630 /* SnapKit */; };
 		154A780C2AC43AFA00F94630 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A780B2AC43AFA00F94630 /* SurveyViewController.swift */; };
+		154A780E2AC449FC00F94630 /* ItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A780D2AC449FC00F94630 /* ItemTableViewCell.swift */; };
+		15B3DEEF2AC6AB530057580C /* DoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B3DEEE2AC6AB530057580C /* DoneViewController.swift */; };
 		686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */; };
 		686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */; };
 		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
@@ -41,6 +43,8 @@
 		154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoriesInfo.swift; sourceTree = "<group>"; };
 		154101162AC1A9C000828CB3 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		154A780B2AC43AFA00F94630 /* SurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyViewController.swift; sourceTree = "<group>"; };
+		154A780D2AC449FC00F94630 /* ItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTableViewCell.swift; sourceTree = "<group>"; };
+		15B3DEEE2AC6AB530057580C /* DoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoneViewController.swift; sourceTree = "<group>"; };
 		686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewController.swift; sourceTree = SOURCE_ROOT; };
 		686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTableViewCell.swift; sourceTree = "<group>"; };
 		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 			children = (
 				686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */,
 				154A780B2AC43AFA00F94630 /* SurveyViewController.swift */,
+				15B3DEEE2AC6AB530057580C /* DoneViewController.swift */,
+				154A780D2AC449FC00F94630 /* ItemTableViewCell.swift */,
 			);
 			path = FeedbackPage;
 			sourceTree = "<group>";
@@ -225,12 +231,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15B3DEEF2AC6AB530057580C /* DoneViewController.swift in Sources */,
 				689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */,
 				689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */,
 				154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */,
 				686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */,
 				154101102AC1A91600828CB3 /* WeatherInfo.swift in Sources */,
 				154100F92AC1A69900828CB3 /* ViewController.swift in Sources */,
+				154A780E2AC449FC00F94630 /* ItemTableViewCell.swift in Sources */,
 				686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */,
 				154100F52AC1A69900828CB3 /* AppDelegate.swift in Sources */,
 				154101132AC1A97600828CB3 /* ClotheInfo.swift in Sources */,
