@@ -29,7 +29,7 @@ class DoneViewController: UIViewController {
     func configureUI() {
         setBackgroundImage()
         self.navigationItem.hidesBackButton = true
-        tabBarController?.tabBar.isHidden = true
+//        self.tabBarController?.tabBar.isHidden = true
         
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Group 45")
