@@ -269,12 +269,7 @@ class ViewController: UIViewController {
         navigationItem.titleView = searchBar
     }
     
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        scrollView.contentSize = CGSize(width: contentView.frame.width, height: feedbackButton.frame.maxY)
-    }
-    
+
     
     func setBackgroundImage() {
         if let backgroundImage = UIImage(named: "backgroundSample") {
@@ -340,9 +335,8 @@ class ViewController: UIViewController {
         }
         
         contentView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(scrollView)
-            make.bottom.equalTo(feedbackButton.snp.bottom)
-            make.width.equalTo(scrollView)
+            make.top.bottom.leading.trailing.equalTo(scrollView.contentLayoutGuide)
+            make.width.equalTo(scrollView.frameLayoutGuide)
         }
         
         locationLabel.snp.makeConstraints { make in
@@ -447,6 +441,7 @@ class ViewController: UIViewController {
             make.leading.equalTo(iconImageView.snp.trailing).offset(10)
             make.centerY.equalTo(feedbackButton.snp.centerY)
             make.trailing.equalTo(feedbackButton.snp.trailing).offset(-10)
+            make.bottom.equalTo(contentView).offset(-20)
         }
     }
 }
