@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class ViewController: UIViewController {
     private lazy var scrollView: UIScrollView = {
@@ -256,7 +257,7 @@ class ViewController: UIViewController {
     }()
     
     
-   
+    
     
     
     
@@ -270,7 +271,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
-
+        
         
     }
     
@@ -306,7 +307,7 @@ class ViewController: UIViewController {
     func setupUI() {
         setBackgroundImage()
         setupNavigationBarAppearance()
-       
+        
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(searchBar)
@@ -336,157 +337,123 @@ class ViewController: UIViewController {
     }
     
     func setupConstraints() {
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
-        ])
-
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalTo(self.view)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+        }
         
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: feedbackButton.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
-        ])
+        contentView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(scrollView)
+            make.bottom.equalTo(feedbackButton.snp.bottom)
+            make.width.equalTo(scrollView)
+        }
         
-//        searchBar.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 54),
-//            searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-//            searchBar.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10)
-//        ])
+        locationLabel.snp.makeConstraints { make in
+            make.top.equalTo(contentView.snp.top).offset(30)
+            make.leading.equalTo(contentView.snp.leading).offset(20)
+        }
         
-        locationLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            locationLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
-            locationLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
-        ])
+        gpsButton.snp.makeConstraints { make in
+            make.centerY.equalTo(locationLabel.snp.centerY)
+            make.leading.equalTo(locationLabel.snp.trailing).offset(10)
+        }
         
-        gpsButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            gpsButton.centerYAnchor.constraint(equalTo: locationLabel.centerYAnchor),
-            gpsButton.leadingAnchor.constraint(equalTo: locationLabel.trailingAnchor, constant: 10)
-        ])
+        temperatureLabel.snp.makeConstraints { make in
+            make.top.equalTo(locationLabel.snp.bottom)
+            make.leading.equalTo(locationLabel.snp.leading)
+        }
         
-        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            temperatureLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor),
-            temperatureLabel.leadingAnchor.constraint(equalTo: locationLabel.leadingAnchor)
-        ])
+        temperatureSegmentedControl.snp.makeConstraints { make in
+            make.bottom.equalTo(temperatureLabel.snp.bottom).offset(-20)
+            make.trailing.equalTo(self.view.snp.trailing).offset(-20)
+        }
         
-        temperatureSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            temperatureSegmentedControl.bottomAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: -20),
-            temperatureSegmentedControl.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
-        ])
+        lowestTemperatureLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(temperatureSegmentedControl.snp.top).offset(-10)
+            make.trailing.equalTo(temperatureSegmentedControl.snp.trailing)
+        }
         
-        lowestTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            lowestTemperatureLabel.bottomAnchor.constraint(equalTo: temperatureSegmentedControl.topAnchor, constant: -10),
-            lowestTemperatureLabel.trailingAnchor.constraint(equalTo: temperatureSegmentedControl.trailingAnchor)
-        ])
+        highestTemperatureLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(lowestTemperatureLabel.snp.top).offset(-5)
+            make.trailing.equalTo(temperatureSegmentedControl.snp.trailing)
+        }
         
-        highestTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            highestTemperatureLabel.bottomAnchor.constraint(equalTo: lowestTemperatureLabel.topAnchor, constant: -5),
-            highestTemperatureLabel.trailingAnchor.constraint(equalTo: temperatureSegmentedControl.trailingAnchor)
-        ])
+        clothesTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(temperatureLabel.snp.bottom).offset(30)
+            make.leading.equalTo(locationLabel.snp.leading).offset(5)
+        }
         
-        clothesTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            clothesTitleLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 30),
-            clothesTitleLabel.leadingAnchor.constraint(equalTo: locationLabel.leadingAnchor, constant: 5)
-        ])
+        clothesItemsLabel.snp.makeConstraints { make in
+            make.top.equalTo(clothesTitleLabel.snp.bottom).offset(10)
+            make.leading.equalTo(clothesTitleLabel.snp.leading)
+        }
         
-        clothesItemsLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            clothesItemsLabel.topAnchor.constraint(equalTo: clothesTitleLabel.bottomAnchor, constant: 10),
-            clothesItemsLabel.leadingAnchor.constraint(equalTo: clothesTitleLabel.leadingAnchor)
-        ])
+        separatorView.snp.makeConstraints { make in
+            make.top.equalTo(clothesTitleLabel.snp.top)
+            make.bottom.equalTo(clothesItemsLabel.snp.bottom)
+            make.centerX.equalTo(self.view.snp.centerX)
+            make.width.equalTo(1)
+        }
         
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            separatorView.topAnchor.constraint(equalTo: clothesTitleLabel.topAnchor),
-            separatorView.bottomAnchor.constraint(equalTo: clothesItemsLabel.bottomAnchor),
-            separatorView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            separatorView.widthAnchor.constraint(equalToConstant: 1)
-        ])
+        belongingsTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(clothesTitleLabel.snp.top)
+            make.leading.equalTo(separatorView.snp.trailing).offset(30)
+        }
         
-        belongingsTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            belongingsTitleLabel.topAnchor.constraint(equalTo: clothesTitleLabel.topAnchor),
-            belongingsTitleLabel.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor, constant: 30)
-        ])
+        belongingsItemsLabel.snp.makeConstraints { make in
+            make.top.equalTo(belongingsTitleLabel.snp.bottom).offset(10)
+            make.leading.equalTo(belongingsTitleLabel.snp.leading)
+        }
         
-        belongingsItemsLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            belongingsItemsLabel.topAnchor.constraint(equalTo: belongingsTitleLabel.bottomAnchor, constant: 10),
-            belongingsItemsLabel.leadingAnchor.constraint(equalTo: belongingsTitleLabel.leadingAnchor)
-        ])
+        weatherInfoContainerView.snp.makeConstraints { make in
+            make.top.equalTo(clothesItemsLabel.snp.bottom).offset(30)
+            make.leading.equalTo(self.view.snp.leading).offset(20)
+            make.trailing.equalTo(self.view.snp.trailing).offset(-20)
+        }
         
-        weatherInfoContainerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            weatherInfoContainerView.topAnchor.constraint(equalTo: clothesItemsLabel.bottomAnchor, constant: 30),
-            weatherInfoContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            weatherInfoContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
-        ])
+        weatherStackView.snp.makeConstraints { make in
+            make.top.equalTo(weatherInfoContainerView.snp.top).offset(10)
+            make.centerX.equalTo(weatherInfoContainerView.snp.centerX)
+        }
         
-        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            weatherStackView.topAnchor.constraint(equalTo: weatherInfoContainerView.topAnchor, constant: 10),
-            weatherStackView.centerXAnchor.constraint(equalTo: weatherInfoContainerView.centerXAnchor)
-        ])
+        weatherIconImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(25)
+        }
         
-        weatherIconImageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            weatherIconImageView.widthAnchor.constraint(equalToConstant: 25),
-            weatherIconImageView.heightAnchor.constraint(equalToConstant: 25)
-        ])
+        weatherCommentLabel.snp.makeConstraints { make in
+            make.top.equalTo(weatherIconImageView.snp.bottom).offset(10)
+            make.leading.equalTo(weatherInfoContainerView.snp.leading).offset(20)
+            make.trailing.equalTo(weatherInfoContainerView.snp.trailing).offset(-20)
+            make.bottom.equalTo(weatherInfoContainerView.snp.bottom).offset(-10)
+        }
         
-        weatherCommentLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            weatherCommentLabel.topAnchor.constraint(equalTo: weatherIconImageView.bottomAnchor, constant: 10),
-            weatherCommentLabel.leadingAnchor.constraint(equalTo: weatherInfoContainerView.leadingAnchor, constant: 20),
-            weatherCommentLabel.trailingAnchor.constraint(equalTo: weatherInfoContainerView.trailingAnchor, constant: -20),
-            weatherCommentLabel.bottomAnchor.constraint(equalTo: weatherInfoContainerView.bottomAnchor, constant: -10)
-        ])
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(weatherInfoContainerView.snp.bottom).offset(20)
+            make.leading.trailing.equalTo(self.view)
+            make.height.equalTo(120)
+        }
         
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: weatherInfoContainerView.bottomAnchor, constant: 20),
-            collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 120)
-        ])
+        feedbackButton.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.bottom).offset(25)
+            make.leading.equalTo(self.view.snp.leading).offset(20)
+            make.trailing.equalTo(self.view.snp.trailing).offset(-20)
+            make.height.equalTo(100)
+        }
         
-        feedbackButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            feedbackButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 25),
-            feedbackButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            feedbackButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
-            feedbackButton.heightAnchor.constraint(equalToConstant: 100)
-        ])
+        iconImageView.snp.makeConstraints { make in
+            make.leading.equalTo(feedbackButton.snp.leading).offset(10)
+            make.centerY.equalTo(feedbackButton.snp.centerY)
+            make.width.height.equalTo(47)
+        }
         
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            iconImageView.leadingAnchor.constraint(equalTo: feedbackButton.leadingAnchor, constant: 10),
-            iconImageView.centerYAnchor.constraint(equalTo: feedbackButton.centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 47),
-            iconImageView.heightAnchor.constraint(equalToConstant: 47)
-        ])
-        
-        feedbackRecommendationLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            feedbackRecommendationLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 10),
-            feedbackRecommendationLabel.centerYAnchor.constraint(equalTo: feedbackButton.centerYAnchor),
-            feedbackRecommendationLabel.trailingAnchor.constraint(equalTo: feedbackButton.trailingAnchor, constant: -10)
-        ])
+        feedbackRecommendationLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconImageView.snp.trailing).offset(10)
+            make.centerY.equalTo(feedbackButton.snp.centerY)
+            make.trailing.equalTo(feedbackButton.snp.trailing).offset(-10)
+        }
     }
+    
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
