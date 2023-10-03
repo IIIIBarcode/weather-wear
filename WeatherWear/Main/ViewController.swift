@@ -20,7 +20,6 @@ class ViewController: UIViewController {
         return view
     }()
     
-    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
@@ -257,22 +256,17 @@ class ViewController: UIViewController {
     }()
     
     
-    
-    
-    
-    
     @objc func clickBtn() {
         //        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
         let feedbackViewController = FeedbackViewController()
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
-        
-        
     }
     
     
@@ -287,6 +281,7 @@ class ViewController: UIViewController {
             self.view.layer.contents = backgroundImage.cgImage
         }
     }
+    
     
     func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
@@ -335,6 +330,7 @@ class ViewController: UIViewController {
         
         setupConstraints()
     }
+    
     
     func setupConstraints() {
         scrollView.snp.makeConstraints { make in
@@ -453,8 +449,8 @@ class ViewController: UIViewController {
             make.trailing.equalTo(feedbackButton.snp.trailing).offset(-10)
         }
     }
-    
 }
+
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
