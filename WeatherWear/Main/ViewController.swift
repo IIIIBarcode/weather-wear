@@ -270,12 +270,6 @@ class ViewController: UIViewController {
     }
     
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        scrollView.contentSize = CGSize(width: contentView.frame.width, height: feedbackButton.frame.maxY)
-    }
-    
-    
     func setBackgroundImage() {
         if let backgroundImage = UIImage(named: "backgroundSample") {
             self.view.layer.contents = backgroundImage.cgImage
