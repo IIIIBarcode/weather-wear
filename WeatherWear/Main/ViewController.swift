@@ -7,8 +7,12 @@
 
 import UIKit
 import SnapKit
+import CoreLocation
 
 class ViewController: UIViewController {
+    
+    let locationManager = CLLocationManager()
+
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -49,12 +53,13 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private let gpsButton: UIButton = {
+    private lazy var gpsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "gpsIcon"), for: .normal)
+        button.addTarget(self, action: #selector(getGPSLocation), for: .touchUpInside)
         return button
     }()
-    
+
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.text = "22°"
@@ -262,11 +267,16 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
+    @objc func getGPSLocation() {
+        locationManager.startUpdatingLocation()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
+        
+        setupLocationManager()
     }
     
 
@@ -292,6 +302,13 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.tintColor = .white
     }
+    
+    
+    func setupLocationManager() {
+           locationManager.delegate = self
+           locationManager.requestWhenInUseAuthorization()
+           locationManager.desiredAccuracy = kCLLocationAccuracyBest
+       }
     
     
     func setupUI() {
@@ -457,5 +474,20 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         
         cell.setHour(indexPath.item * 3)
         return cell
+    }
+}
+
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            print("위도: \(latitude), 경도: \(longitude)")
+        }
+        locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error getting location: \(error.localizedDescription)")
     }
 }
