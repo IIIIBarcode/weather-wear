@@ -269,6 +269,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        navigationItem.titleView = searchBar
+
+        
     }
     
     
@@ -332,16 +335,15 @@ class ViewController: UIViewController {
         setupConstraints()
     }
     
-    
     func setupConstraints() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            
-            scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
         ])
+
         
         contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -352,16 +354,16 @@ class ViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
         
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 54),
-            searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-            searchBar.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10)
-        ])
+//        searchBar.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 54),
+//            searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
+//            searchBar.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10)
+//        ])
         
         locationLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            locationLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 30),
+            locationLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             locationLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20)
         ])
         
