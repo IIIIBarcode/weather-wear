@@ -8,6 +8,8 @@
 import SnapKit
 import UIKit
 import CoreLocation
+import SwiftyJSON
+import Alamofire
 
 
 class WeeklyWearViewController: UIViewController {
@@ -37,11 +39,11 @@ class WeeklyWearViewController: UIViewController {
 
     lazy var location: UILabel = {
         let lb = UILabel()
-//        lb.text = "서울특별시"
-        lb.text = user.city
-        lb.font = .systemFont(ofSize: 40, weight: .bold)
+        lb.text = "서울특별시"
+        lb.font = .systemFont(ofSize: 25, weight: .bold)
         lb.textColor = .white
         lb.textAlignment = .left
+        lb.numberOfLines = 0
         view.addSubview(lb)
         return lb
     }()
@@ -83,13 +85,16 @@ class WeeklyWearViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         makeUi()
-        setBackgroundImage()
+        setBackgroundImage(weatherBackgroundName)
         setting()
         setupLocationManager()
+        searchBar.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
         weakTable.reloadData()
+        updateUI()
+        
     }
 }
 
@@ -123,6 +128,11 @@ extension WeeklyWearViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension WeeklyWearViewController {
+    func updateUI() {
+        self.location.text = user.city
+        setBackgroundImage(nowWeather.weather)
+    }
+    
     func setting() {
         weakTable.register(WeeklyTableViewCell.self, forCellReuseIdentifier: "WeekCell")
         weakTable.dataSource = self
@@ -130,17 +140,13 @@ extension WeeklyWearViewController {
         navigationItem.titleView = searchBar
     }
 
-    func setBackgroundImage() {
-        if let backgroundImage = UIImage(named: "backgroundSample") {
-            view.layer.contents = backgroundImage.cgImage
-        }
-    }
 
     func makeUi() {
         location.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.equalTo(view.snp.leading).inset(20)
-            make.height.equalTo(50)
+//            make.height.equalTo(50)
+            make.width.equalTo(300)
         }
         mylacation.snp.makeConstraints { make in
             make.leading.equalTo(location.snp.trailing).inset(-10)
@@ -170,6 +176,150 @@ extension WeeklyWearViewController {
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
+    
+    func getWeeklyWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            
+            
+            // API에서 받아온 데이터를 파싱하여 WeatherInfo 객체로 변환하고 배열에 저장
+            let list = json["list"] as! [[String: Any]]
+            weatherData = []
+            for item in list{
+                let date = item["dt_txt"] as! String // 예보시간
+                let main = item["main"] as! [String : Any]
+                let temp = main["temp"] as! Double //기온
+                let weather = item["weather"] as! [[String: Any]]
+                let weatherState = weather[0]["main"] as! String // 날씨상태
+                let pop = item["pop"] as! Double //강수확률
+                let rain = item["rain"] as? [String: Any]
+                let precipitation = rain?["3h"] as? Double // 3시간당 강수량
+                let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
+                weatherData.append(weatherinfo)
+            }
+            
+            
+            
+            // UI 업데이트는 메인 스레드에서 수행해야 함
+            DispatchQueue.main.async {
+                updateWeeklyWeather()
+                self.weakTable.reloadData()
+            }
+        }.resume()
+        
+
+    }
+    
+    func getAddress(_ lat: String, _ lon: String) {
+        let Reverse_NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords="
+        let latlon = lon + "," + lat
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: Reverse_NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: Reverse_NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(Reverse_NAVER_GEOCODE_URL + "\(latlon)&output=json", method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    print("성공")
+                    let json = JSON(value)
+                    let results = json["results"]
+                    let region = results[0]["region"]
+                    let name1 = region["area1"]["name"].stringValue
+                    let name2 = region["area2"]["name"].stringValue
+                    let name3 = region["area3"]["name"].stringValue
+                    let name4 = region["area4"]["name"].stringValue
+                    print("\(name1) \(name2) \(name3) \(name4)")
+                    DispatchQueue.main.async {
+                        user.city = "\(name1) \(name2) \(name3) \(name4)"
+                        self.location.text = user.city
+                    }
+                case .failure(let error):
+                    let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true)
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
+    }
+    
+    func getCoordinate(_ address: String) {
+        
+        let NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="
+        let encodeAddress = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(NAVER_GEOCODE_URL + encodeAddress, method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    let json = JSON(value)
+                    let data = json["addresses"]
+                    let ad = data[0]["roadAddress"]
+                    let apilat = data[0]["y"]
+                    let apilon = data[0]["x"]
+                    DispatchQueue.main.async{
+                        if ad.stringValue == "" {
+                            let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "OK", style: .default)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true)
+                        }
+                        else{
+                            self.location.text = ad.stringValue
+                            user.city = ad.stringValue
+                            lat = apilat.stringValue
+                            lon = apilon.stringValue
+                            self.getNowWeather()
+                            self.getWeeklyWeather()
+                        }
+                        
+                    }
+                    //제주
+                case .failure(let error):
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
+    }
+    
+    func getNowWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            let weather = json["weather"] as? [[String: Any]]
+            let weatherState = weather?[0]["main"] as! String
+            let main = json["main"] as! [String: Any]
+            let temp = main["temp"] as? Double
+            let tempMin = main["temp_min"] as? Double
+            let tempMax = main["temp_max"] as? Double
+            let rain = json["rain"] as? [String: Double]
+            let precipitation = (rain?["1h"] ?? 0) * 100
+            
+            DispatchQueue.main.async {
+                nowWeather.temp = Int(temp!)
+                nowWeather.weather = weatherState
+                nowWeather.precipitation = Int(precipitation)
+                nowTempMax = Int(tempMax!)
+                nowTempMin = Int(tempMin!)
+                self.setBackgroundImage(nowWeather.weather)
+            }//구의동 독도
+        }.resume()
+    }
 }
 
 extension WeeklyWearViewController: CLLocationManagerDelegate {
@@ -177,6 +327,11 @@ extension WeeklyWearViewController: CLLocationManagerDelegate {
         if let location = locations.last {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
+            lat = String(latitude)
+            lon = String(longitude)
+            getAddress(lat, lon)
+            getNowWeather()
+            getWeeklyWeather()
             print("위도: \(latitude), 경도: \(longitude)")
         }
         locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
@@ -184,5 +339,12 @@ extension WeeklyWearViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location: \(error.localizedDescription)")
+    }
+}
+
+extension WeeklyWearViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let address = searchBar.text
+        getCoordinate(address ?? "")
     }
 }

@@ -17,14 +17,9 @@ class FeedbackViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    func setBackgroundImage() {
-        if let backgroundImage = UIImage(named: "backgroundSample") {
-            self.view.layer.contents = backgroundImage.cgImage
-        }
-    }
     
     func ConfigureUI() {
-        setBackgroundImage()
+        setBackgroundImage(weatherBackgroundName)
         view.backgroundColor = .black
         let iconImage = UIImageView()
         view.addSubview(iconImage)

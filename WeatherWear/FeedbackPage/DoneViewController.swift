@@ -20,14 +20,9 @@ class DoneViewController: UIViewController {
         }
     }
     
-    func setBackgroundImage() {
-        if let backgroundImage = UIImage(named: "backgroundSample") {
-            self.view.layer.contents = backgroundImage.cgImage
-        }
-    }
     
     func configureUI() {
-        setBackgroundImage()
+        setBackgroundImage(weatherBackgroundName)
         self.navigationItem.hidesBackButton = true
 //        self.tabBarController?.tabBar.isHidden = true
         

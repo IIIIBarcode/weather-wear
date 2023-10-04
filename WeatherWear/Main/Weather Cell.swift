@@ -67,8 +67,10 @@ class WeatherHourCell: UICollectionViewCell {
         case "Clouds": weatherIconImageView.image = UIImage(named: "cloudyIcon")
         case "Rain": weatherIconImageView.image = UIImage(named: "rainIcon")
         case "Snow": weatherIconImageView.image = UIImage(named: "snowyIcon")
+        case "Drizzle", "Mist": weatherIconImageView.image = UIImage(named: "drizzelIcon")
+        case "Thunderstorm": weatherIconImageView.image = UIImage(named: "thunderstormIcon")
         default:
-            break
+            weatherIconImageView.image = UIImage(named: "cloudyIcon")
         }
     }
     

@@ -8,18 +8,20 @@
 import Foundation
 struct WeatherInfo { //구의강변로 94
     
-    let temp: Int
-    let date: String
-    let weather: String
-    let precipitation: Int
-    let pop: Int
+    var temp: Int
+    var date: String
+    var weather: String
+    var precipitation: Int
+    var pop: Int
     
 }
 var lat = ""
 var lon = ""
 
-
+var weatherBackgroundName = nowWeather.weather
 var nowWeather = WeatherInfo(temp: 0, date: "", weather: "", precipitation: 0, pop: 0)
+var nowTempMax = 0
+var nowTempMin = 0
 var weatherData: [WeatherInfo] = []
 var weeklyWeather: [WeatherInfo] = []
 
