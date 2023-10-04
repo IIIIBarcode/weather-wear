@@ -7,7 +7,13 @@
 
 import SnapKit
 import UIKit
+import CoreLocation
+
+
 class WeeklyWearViewController: UIViewController {
+    
+    let locationManager = CLLocationManager()
+    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
@@ -43,6 +49,7 @@ class WeeklyWearViewController: UIViewController {
         let btn = UIButton()
         btn.setImage(UIImage(named: "myLocation"), for: .normal)
         btn.tintColor = .white
+        btn.addTarget(self, action: #selector(getGPSLocation), for: .touchUpInside)
         view.addSubview(btn)
         return btn
 
@@ -77,6 +84,7 @@ class WeeklyWearViewController: UIViewController {
         makeUi()
         setBackgroundImage()
         setting()
+        setupLocationManager()
     }
 }
 
@@ -143,5 +151,30 @@ extension WeeklyWearViewController {
             make.trailing.equalTo(-20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+    }
+    
+    func setupLocationManager() {
+           locationManager.delegate = self
+           locationManager.requestWhenInUseAuthorization()
+           locationManager.desiredAccuracy = kCLLocationAccuracyBest
+       }
+    
+    @objc func getGPSLocation() {
+        locationManager.startUpdatingLocation()
+    }
+}
+
+extension WeeklyWearViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            print("위도: \(latitude), 경도: \(longitude)")
+        }
+        locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error getting location: \(error.localizedDescription)")
     }
 }
