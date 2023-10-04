@@ -279,14 +279,11 @@ class ViewController: UIViewController {
         setupLocationManager()
     }
     
-
-    
     func setBackgroundImage() {
         if let backgroundImage = UIImage(named: "backgroundSample") {
             self.view.layer.contents = backgroundImage.cgImage
         }
     }
-    
     
     func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
@@ -303,13 +300,11 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
-    
     func setupLocationManager() {
            locationManager.delegate = self
            locationManager.requestWhenInUseAuthorization()
            locationManager.desiredAccuracy = kCLLocationAccuracyBest
        }
-    
     
     func setupUI() {
         setBackgroundImage()
