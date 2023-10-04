@@ -29,11 +29,12 @@ class ViewController: UIViewController {
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         searchBar.barStyle = .default
         searchBar.tintColor = .white
+        searchBar.returnKeyType = .search
         
         // 텍스트필드의 text, placeholder, 및 background 설정
         if let textField = searchBar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
-            textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            textField.attributedPlaceholder = NSAttributedString(string: "도로명 주소나 지역명을 입력해주세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white.withAlphaComponent(0.7)])
             textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
             
             // 돋보기 아이콘 색상
