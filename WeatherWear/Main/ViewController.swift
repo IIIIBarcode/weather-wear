@@ -13,7 +13,6 @@ import CoreLocation
 
 class ViewController: UIViewController {
     
-    var tempToday = 0
     let locationManager = CLLocationManager()
     
     private lazy var scrollView: UIScrollView = {
@@ -51,7 +50,7 @@ class ViewController: UIViewController {
     
     private let locationLabel: UILabel = {
         let label = UILabel()
-        label.text = " "
+        label.text = "\(user.city)"
         label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 25)
         label.numberOfLines = 0
@@ -67,7 +66,7 @@ class ViewController: UIViewController {
     
     private let temperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "22°"
+        label.text = "\(nowWeather.temp)°"
         label.font = UIFont.systemFont(ofSize: 115)
         label.textColor = .white
         return label
@@ -291,6 +290,23 @@ class ViewController: UIViewController {
         print("멘트 설정하기")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        updateUI()
+    }
+    
+    func updateUI() {
+        setBackgroundImage(nowWeather.weather)
+        locationLabel.text = user.city
+        temperatureLabel.text = "\(nowWeather.temp)°"
+        highestTemperatureLabel.text = "\(nowTempMax)°"
+        lowestTemperatureLabel.text = "\(nowTempMin)°"
+        getWeatherIcon(nowWeather.weather)
+        clothesItemsLabel.text = getClotheContent(nowWeather.temp)
+        belongingsItemsLabel.text = getAccContent(nowWeather.weather)
+        weatherCommentLabel.text = getWeaterComment(nowWeather.weather, nowTempMax, nowTempMin, nowWeather.precipitation)
+        collectionView.reloadData()
+    }
+    
 //    func setBackgroundImage() {
 //        if let backgroundImage = UIImage(named: "backgroundSample") {
 //            self.view.layer.contents = backgroundImage.cgImage
@@ -509,7 +525,8 @@ class ViewController: UIViewController {
                             self.present(alert, animated: true)
                         }
                         else{
-                            self.locationLabel.text = ad.stringValue
+//                            self.locationLabel.text = ad.stringValue
+                            user.city = ad.stringValue
                             lat = apilat.stringValue
                             lon = apilon.stringValue
                             self.getNowWeather()
@@ -545,19 +562,27 @@ class ViewController: UIViewController {
             let precipitation = (rain?["1h"] ?? 0) * 100
             
             DispatchQueue.main.async {
-                self.tempToday = Int(temp!)
-                self.temperatureLabel.text = "\(Int(temp!))°"
-                self.highestTemperatureLabel.text = "최고 \(Int(tempMax!))°"
-                self.lowestTemperatureLabel.text = "최저 \(Int(tempMin!))°"
+                nowWeather.temp = Int(temp!)
+                nowWeather.weather = weatherState
+                nowWeather.precipitation = Int(precipitation)
+                nowTempMax = Int(tempMax!)
+                nowTempMin = Int(tempMin!)
+                
+                self.locationLabel.text = user.city
+                self.temperatureLabel.text = "\(nowWeather.temp)°"
+                self.highestTemperatureLabel.text = "최고 \(nowTempMax)°"
+                self.lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
                 weatherBackgroundName = weatherState
                 self.setBackgroundImage(weatherBackgroundName)
-                self.clothesItemsLabel.text = self.getClotheContent(self.tempToday)
+                self.clothesItemsLabel.text = self.getClotheContent(nowWeather.temp)
                 print(weatherBackgroundName)
                 self.belongingsItemsLabel.text = self.getAccContent(weatherBackgroundName)
                 self.weatherCommentLabel.text = self.getWeaterComment(weatherBackgroundName, Int(tempMax!), Int(tempMin!), Int(precipitation))
+                self.getWeatherIcon(weatherBackgroundName)
             }//구의동
         }.resume()
     }
+    
     
     func getClotheContent(_ tempToday: Int) -> String {
         var content = ""
@@ -605,6 +630,24 @@ class ViewController: UIViewController {
         return content
     }
     
+    func getWeatherIcon(_ weather: String) {
+        switch weather {
+        case "Clouds": weatherIconImageView.image = UIImage(named: "cloudyIcon")
+            weatherDescriptionLabel.text = "흐림"
+        case "Clear": weatherIconImageView.image = UIImage(named: "sunnyIcon")
+            weatherDescriptionLabel.text = "맑음"
+        case "Snow": weatherIconImageView.image = UIImage(named: "snowyIcon")
+            weatherDescriptionLabel.text = "눈"
+        case "Rain": weatherIconImageView.image = UIImage(named: "rainIcon")
+            weatherDescriptionLabel.text = "비"
+        case "Thunderstorm": weatherIconImageView.image = UIImage(named: "thunderstormIcon")
+            weatherDescriptionLabel.text = "천둥번개"
+        case "Drizzle", "Mist": weatherIconImageView.image = UIImage(named: "drizzelIcon")
+            weatherDescriptionLabel.text = "이슬비"
+        default: break
+        }
+    }
+    
     func getWeaterComment(_ weather: String, _ maxTemperature: Int, _ minTemperature: Int, _ precipitation: Int) -> String {
         var content = ""
         switch weather {
@@ -614,7 +657,10 @@ class ViewController: UIViewController {
             else if maxTemperature < 10 {
                 content = "오늘은 최고 \(maxTemperature)°C에 구름이 많을 것으로 예상됩니다. 따뜻한 스카프와 함께 산책을 즐겨보세요. 구름이 많은 날, 아늑한 카페에서 창밖을 바라보며 차를 마시는 것도 좋겠네요."
             }
-        case "Rain", "Mist": if precipitation > 20 {
+            else {
+                content = "흐린 날도 그 특별한 매력이 있어요. 구름이 덮인 하늘을 구경하며 차분한 시간을 보내보세요. 구름이 뭉게뭉게 덮인 날에는 조용한 카페에서 책을 읽는 것도 좋겠죠?"
+            }
+        case "Rain": if precipitation > 20 {
             content = "오늘은 강한 비가 예상됩니다. \(precipitation)mm의 비가 내릴 것으로 예상되니, 외출 시 우산은 필수입니다! 비가 많이 올 것 같으니, 집에서 릴렉스하는 시간을 가져보는 건 어떨까요?"
         }
             else if precipitation < 5 {
@@ -623,7 +669,18 @@ class ViewController: UIViewController {
             else {
                 content = "오늘은 \(precipitation)mm의 비가 예상됩니다. 우산을 꼭 챙기세요. 창밖의 비를 감상하며 카페에서 커피를 마시는 것도 좋겠네요. 비가 내릴 예정이니, 집에서 편하게 영화나 드라마를 즐겨보세요."
             }
+        case "Clear": if maxTemperature > 20 {
+            content = "오늘은 최고 \(maxTemperature)°C까지 올라가는 따뜻한 날씨네요. 외출하기 좋은 날! 근처 공원에서 산책을 즐겨보세요. 오늘 기온이 \(maxTemperature)°C까지 올라가니, 카페 테라스에서 커피를 즐기는 것도 좋겠네요."
+        }
+            else if maxTemperature < 10 {
+                content = "오늘은 최고 \(maxTemperature)°C까지만 올라가는 시원한 날씨입니다. 따뜻한 아우터를 준비하고, 북카페에서 차를 즐겨보세요. 오늘의 기온은 \(minTemperature)°C에서 \(maxTemperature)°C 사이로 예상됩니다. 코트와 함께 가까운 도서관에서 조용한 시간을 보내보세요."
+            }
+            else {
+               content = "오늘 날씨가 정말 좋아서 밖에 나가기 딱 좋은 날이에요! 햇빛이 화사한 날에는 야외 운동을 즐기면 기분도 좋아지죠! "
+            }
         case "Snow": content = "오늘은 \(precipitation)mm의 눈이 예상됩니다. 눈사람을 만들러 나가볼까요? 눈이 내릴 예정이에요. 따뜻한 코코아를 준비하고, 눈 내리는 풍경을 감상해보세요."
+        case "Thunderstorm": content = "오늘은 천둥번개가 예상됩니다. 외출 시 우산은 필수입니다! 급한 일이 아니라면 외출을 삼가하고 집에서 안전하게 휴식시간을 보내는 것은 어떨까요?"
+        case "Drizzle", "Mist": content = "오늘은 약간의 빗방울이 떨어질 것으로 예상됩니다. 가벼운 비를 대비해 가볍게 준비하세요. 가벼운 비가 내릴 예정이니, 북카페에서 조용한 시간을 보내는 것도 좋을 것 같아요."
         default: content = "오늘은 \(weather)에요"
         }
         return content

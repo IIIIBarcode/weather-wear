@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct AccessoriesInfo {
+struct AccessoriesInfo: Equatable {
     
     let name: String
     let weatherType: String

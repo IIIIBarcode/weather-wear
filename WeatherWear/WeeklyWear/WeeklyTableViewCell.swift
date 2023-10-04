@@ -113,7 +113,7 @@ class WeeklyTableViewCell: UITableViewCell {
 
     lazy var accessoriesView: UIView = {
         let vw = UIView()
-        vw.addSubview(accessories)
+        vw.addSubview(accessoriesLabel)
         vw.backgroundColor = UIColor.white.withAlphaComponent(0.1)
 
         vw.layer.cornerRadius = 10
@@ -121,13 +121,13 @@ class WeeklyTableViewCell: UITableViewCell {
         return vw
     }()
 
-    lazy var accessories: UILabel = {
+    lazy var accessoriesLabel: UILabel = {
         let lb = UILabel()
         lb.text = "우산, 우비, 레인부츠"
         lb.font = .systemFont(ofSize: 12, weight: .medium)
         lb.textColor = .white
         lb.textAlignment = .center
-        lb.numberOfLines = 4
+        lb.numberOfLines = 0
         return lb
     }()
 
@@ -208,7 +208,7 @@ extension WeeklyTableViewCell {
             make.centerX.centerY.equalTo(self.clothesView)
             make.width.equalTo(100)
         }
-        accessories.snp.makeConstraints { make in
+        accessoriesLabel.snp.makeConstraints { make in
             make.centerX.centerY.equalTo(self.accessoriesView)
             make.width.equalTo(100)
         }
@@ -238,6 +238,8 @@ extension WeeklyTableViewCell {
         case "Clouds": amWeather.image = UIImage(named: "cloudyIcon")
         case "Rain": amWeather.image = UIImage(named: "rainIcon")
         case "Snow": amWeather.image = UIImage(named: "snowyIcon")
+        case "Drizzle", "Mist": amWeather.image = UIImage(named: "drizzelIcon")
+        case "Thunderstorm": amWeather.image = UIImage(named: "thunderstormIcon")
         default:
             break
         }
@@ -246,8 +248,69 @@ extension WeeklyTableViewCell {
         case "Clouds": pmWeather.image = UIImage(named: "cloudyIcon")
         case "Rain": pmWeather.image = UIImage(named: "rainIcon")
         case "Snow": pmWeather.image = UIImage(named: "snowyIcon")
+        case "Drizzle", "Mist": amWeather.image = UIImage(named: "drizzelIcon")
+        case "Thunderstorm": amWeather.image = UIImage(named: "thunderstormIcon")
         default:
             break
         }
+        
+        clothes.text = getClotheContent(weather1.temp)
+        accessoriesLabel.text = getAccContent(weather1.weather)
+    }
+    
+    func getClotheContent(_ tempToday: Int) -> String {
+        var content = ""
+        var groupNumber = 0
+        if tempToday >= 28 {
+            groupNumber = 0
+        }
+        else if tempToday < 28 && tempToday >= 23 {
+            groupNumber = 1
+        }
+        else if tempToday < 23 && tempToday >= 20 {
+            groupNumber = 2
+        }
+        else if tempToday < 20 && tempToday >= 17 {
+            groupNumber = 3
+        }
+        else if tempToday < 17 && tempToday >= 12 {
+            groupNumber = 4
+        }
+        else if tempToday < 12 && tempToday >= 9 {
+            groupNumber = 5
+        }
+        else if tempToday < 8 && tempToday >= 5 {
+            groupNumber = 6
+        }
+        else {
+            groupNumber = 7
+        }
+        for i in 0..<itemgroup[groupNumber].count{
+            if i == 0 || i == 2{
+                content += "\(itemgroup[groupNumber][i]), "
+            }
+            else if i == 1 {
+                content += "\(itemgroup[groupNumber][i])\n "
+            }
+            else {
+                content += "\(itemgroup[groupNumber][i])"
+            }
+        }
+        return content
+    }
+    
+    func getAccContent(_ weatherBackgroundName: String) -> String {
+        var content = ""
+        for item in accessories {
+            if item.weatherType == weatherBackgroundName {
+                content += "\(item.name)\n"
+            }
+        }
+        if content == "" {
+            content = "작은 우산\n따듯한 음료\n"
+        }
+        content.removeLast()
+        content.removeLast()
+        return content
     }
 }

@@ -16,9 +16,9 @@ extension UIViewController {
         case "Clouds": imageName = "cloudyBackground"
         case "Rain": imageName = "rainyBackground"
         case "Snow": imageName = "snowyBackground"
-        case "Thunderstorm": imageName = "rainyBackground"
-        case "Drizzle": imageName = "rainyBackground"
-        default: imageName = "backgroundSample"
+        case "Thunderstorm": imageName = "thnderstormBackground"
+        case "Drizzle": imageName = "drizzleBackground"
+        default: imageName = "cloudyBackground"
         }
         if let backgroundImage = UIImage(named: imageName) {
             self.view.layer.contents = backgroundImage.cgImage
