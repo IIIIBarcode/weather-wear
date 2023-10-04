@@ -14,7 +14,7 @@ import CoreLocation
 class ViewController: UIViewController {
     
     let locationManager = CLLocationManager()
-
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -61,7 +61,7 @@ class ViewController: UIViewController {
         button.addTarget(self, action: #selector(getGPSLocation), for: .touchUpInside)
         return button
     }()
-
+    
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.text = "22°"
@@ -272,10 +272,11 @@ class ViewController: UIViewController {
     @objc func searchCity(_ sender: UITextField) {
         let address = sender.text
         getCoordinate(address ?? "")
+    }
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -308,10 +309,10 @@ class ViewController: UIViewController {
     }
     
     func setupLocationManager() {
-           locationManager.delegate = self
-           locationManager.requestWhenInUseAuthorization()
-           locationManager.desiredAccuracy = kCLLocationAccuracyBest
-       }
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
     
     func setupUI() {
         setBackgroundImage()
@@ -463,6 +464,7 @@ class ViewController: UIViewController {
             make.bottom.equalTo(contentView).offset(-20)
         }
     }
+    //제주
     
     func getCoordinate(_ address: String) {
         
@@ -482,7 +484,7 @@ class ViewController: UIViewController {
                     let apilon = data[0]["x"]
                     DispatchQueue.main.async{
                         if ad.stringValue == "" {
-                            let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요", preferredStyle: .alert)
+                            let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
                             let ok = UIAlertAction(title: "OK", style: .default)
                             alert.addAction(ok)
                             self.present(alert, animated: true)
@@ -559,10 +561,43 @@ class ViewController: UIViewController {
             
             // UI 업데이트는 메인 스레드에서 수행해야 함
             DispatchQueue.main.async {
-                print("날씨아이콘 변경필요")
                 self.collectionView.reloadData()
             }
         }.resume()
+    }
+    
+    func getAddress(_ lat: String, _ lon: String) {
+        let Reverse_NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords="
+        let latlon = lon + "," + lat
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: Reverse_NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: Reverse_NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(Reverse_NAVER_GEOCODE_URL + "\(latlon)&output=json", method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    print("성공")
+                    let json = JSON(value)
+                    let results = json["results"]
+                    let region = results[0]["region"]
+                    let name1 = region["area1"]["name"].stringValue
+                    let name2 = region["area2"]["name"].stringValue
+                    let name3 = region["area3"]["name"].stringValue
+                    let name4 = region["area4"]["name"].stringValue
+                    print("\(name1) \(name2) \(name3) \(name4)")
+                    DispatchQueue.main.async {
+                        self.locationLabel.text = "\(name1) \(name2) \(name3) \(name4)"
+                    }
+                case .failure(let error):
+                    let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true)
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
     }
 }
 
@@ -580,8 +615,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             let weather = weeklyWeather[indexPath.row]
             cell.congigureUI(weather: weather)
         }
+        else {
+            cell.setHour(indexPath.item * 3)
+        }
         
-//        cell.setHour(indexPath.item * 3)
         return cell
     }
 }
@@ -591,12 +628,18 @@ extension ViewController: CLLocationManagerDelegate {
         if let location = locations.last {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
+            lat = String(latitude)
+            lon = String(longitude)
+            getAddress(lat, lon)
+            getNowWeather()
+            getWeeklyWeather()
             print("위도: \(latitude), 경도: \(longitude)")
         }
         locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location: \(error.localizedDescription)")
     }
 }
+

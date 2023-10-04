@@ -46,7 +46,9 @@ class WeatherHourCell: UICollectionViewCell {
         hourLabel.text = "\(hour)시"
     }
     
-    func congigureUI(weather: WeatherInfo) { // asset 추가되면 날씨아이콘 변경 필요
+    func congigureUI(weather: WeatherInfo) {
+        
+        //시간 변경 작업
         let date = weather.date
         let firstindex = date.index(date.startIndex, offsetBy: 11)
         let endindex = date.index(date.startIndex, offsetBy: 13)
@@ -55,7 +57,19 @@ class WeatherHourCell: UICollectionViewCell {
             time.removeFirst()
         }
         hourLabel.text = "\(time)시"
+        
+        //기온 변경 작업
         temperatureLabel.text = "\(weather.temp)°"
+        
+        //날씨 아이콘 변경 작업
+        switch weather.weather {
+        case "Clear": weatherIconImageView.image = UIImage(named: "sunnyIcon")
+        case "Clouds": weatherIconImageView.image = UIImage(named: "cloudyIcon")
+        case "Rain": weatherIconImageView.image = UIImage(named: "rainIcon")
+        case "Snow": weatherIconImageView.image = UIImage(named: "snowyIcon")
+        default:
+            break
+        }
     }
     
     private func setupUI() {
