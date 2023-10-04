@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import SwiftyJSON
+import Alamofire
 
 class ViewController: UIViewController {
     private lazy var scrollView: UIScrollView = {
@@ -262,11 +264,17 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
+    @objc func searchCity(_ sender: UITextField) {
+        let address = sender.text
+        getCoordinate(address ?? "")
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
+        searchBar.searchTextField.addTarget(self, action: #selector(searchCity), for: .touchUpInside)
     }
     
     
@@ -449,7 +457,110 @@ class ViewController: UIViewController {
             make.trailing.equalTo(feedbackButton.snp.trailing).offset(-10)
         }
     }
+    
+    func getCoordinate(_ address: String) {
+        
+        let NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="
+        let encodeAddress = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(NAVER_GEOCODE_URL + encodeAddress, method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    let json = JSON(value)
+                    let data = json["addresses"]
+                    let ad = data[0]["roadAddress"]
+                    let apilat = data[0]["y"]
+                    let apilon = data[0]["x"]
+                    DispatchQueue.main.async{
+                        if ad.stringValue == "" {
+                            let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요", preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "OK", style: .default)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true)
+                        }
+                        else{
+                            self.locationLabel.text = ad.stringValue
+                            lat = apilat.stringValue
+                            lon = apilon.stringValue
+                            self.getNowWeather()
+                            self.getWeeklyWeather()
+                        }
+                        
+                    }
+                    //제주
+                case .failure(let error):
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
+    }
+    
+    func getNowWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            let weather = json["weather"] as? [[String: Any]]
+            let weatherState = weather?[0]["main"] as? String
+            let main = json["main"] as! [String: Any]
+            let temp = main["temp"] as? Double
+            let tempMin = main["temp_min"] as? Double
+            let tempMax = main["temp_max"] as? Double
+            
+            DispatchQueue.main.async {
+                self.temperatureLabel.text = "\(Int(temp!))°"
+                self.highestTemperatureLabel.text = "최고 \(Int(tempMax!))°"
+                self.lowestTemperatureLabel.text = "최저 \(Int(tempMin!))°"
+            }//구의동
+        }.resume()
+    }
+    
+    func getWeeklyWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            
+            
+            // API에서 받아온 데이터를 파싱하여 WeatherInfo 객체로 변환하고 배열에 저장
+            let list = json["list"] as! [[String: Any]]
+            weeklyWeather = []
+            for item in list{
+                let date = item["dt_txt"] as! String // 예보시간
+                let main = item["main"] as! [String : Any]
+                let temp = main["temp"] as! Double //기온
+                let weather = item["weather"] as! [[String: Any]]
+                let weatherState = weather[0]["main"] as! String // 날씨상태
+                let pop = item["pop"] as! Double //강수확률
+                let rain = item["rain"] as? [String: Any]
+                let precipitation = rain?["3h"] as? Double // 3시간당 강수량
+                let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
+                weeklyWeather.append(weatherinfo)
+            }
+            
+            
+            
+            // UI 업데이트는 메인 스레드에서 수행해야 함
+            DispatchQueue.main.async {
+                print("날씨아이콘 변경필요")
+                self.collectionView.reloadData()
+            }
+        }.resume()
+    }
 }
+
+
 
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -459,8 +570,12 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeatherHourCell", for: indexPath) as! WeatherHourCell
+        if !weeklyWeather.isEmpty {
+            let weather = weeklyWeather[indexPath.row]
+            cell.congigureUI(weather: weather)
+        }
         
-        cell.setHour(indexPath.item * 3)
+//        cell.setHour(indexPath.item * 3)
         return cell
     }
 }

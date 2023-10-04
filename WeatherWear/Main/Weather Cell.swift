@@ -46,6 +46,18 @@ class WeatherHourCell: UICollectionViewCell {
         hourLabel.text = "\(hour)시"
     }
     
+    func congigureUI(weather: WeatherInfo) { // asset 추가되면 날씨아이콘 변경 필요
+        let date = weather.date
+        let firstindex = date.index(date.startIndex, offsetBy: 11)
+        let endindex = date.index(date.startIndex, offsetBy: 13)
+        var time = date.substring(with: firstindex..<endindex)
+        if time.first == "0" {
+            time.removeFirst()
+        }
+        hourLabel.text = "\(time)시"
+        temperatureLabel.text = "\(weather.temp)°"
+    }
+    
     private func setupUI() {
         addSubview(hourLabel)
         addSubview(weatherIconImageView)
