@@ -48,9 +48,10 @@ class ViewController: UIViewController {
     
     private let locationLabel: UILabel = {
         let label = UILabel()
-        label.text = "서울특별시"
+        label.text = " "
         label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 25)
+        label.numberOfLines = 0
         return label
     }()
     
@@ -355,6 +356,7 @@ class ViewController: UIViewController {
         locationLabel.snp.makeConstraints { make in
             make.top.equalTo(contentView.snp.top).offset(30)
             make.leading.equalTo(contentView.snp.leading).offset(20)
+            make.width.equalTo(300)
         }
         
         gpsButton.snp.makeConstraints { make in
