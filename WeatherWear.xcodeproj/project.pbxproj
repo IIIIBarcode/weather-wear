@@ -29,6 +29,7 @@
 		686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */; };
 		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
 		689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C32AC26010005BA3A2 /* TapbarController.swift */; };
+		D80B335F2ACC3552003158D8 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D80B335E2ACC3551003158D8 /* CoreLocation.framework */; };
 		D8F30C222AC4676B0026351D /* Weather Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F30C212AC4676B0026351D /* Weather Cell.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +55,7 @@
 		686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTableViewCell.swift; sourceTree = "<group>"; };
 		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
 		689BC5C32AC26010005BA3A2 /* TapbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapbarController.swift; sourceTree = "<group>"; };
+		D80B335E2ACC3551003158D8 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D8F30C212AC4676B0026351D /* Weather Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Weather Cell.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,6 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				152021412ACC5CCD00140030 /* SwiftyJSON in Frameworks */,
+				D80B335F2ACC3552003158D8 /* CoreLocation.framework in Frameworks */,
 				154A77E82AC2FA7000F94630 /* SnapKit in Frameworks */,
 				1520213E2ACC5CC500140030 /* Alamofire in Frameworks */,
 			);
@@ -76,6 +79,7 @@
 			children = (
 				154100F32AC1A69900828CB3 /* WeatherWear */,
 				154100F22AC1A69900828CB3 /* Products */,
+				D80B335D2ACC3551003158D8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -161,6 +165,14 @@
 				1520214A2ACCF6E700140030 /* APIKEY.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		D80B335D2ACC3551003158D8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D80B335E2ACC3551003158D8 /* CoreLocation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -414,6 +426,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherWear/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱에서는 날씨 정보를 제공하기 위해 사용자의 위치 정보가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -442,6 +455,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherWear/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱에서는 날씨 정보를 제공하기 위해 사용자의 위치 정보가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

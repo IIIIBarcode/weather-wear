@@ -9,8 +9,12 @@ import UIKit
 import SnapKit
 import SwiftyJSON
 import Alamofire
+import CoreLocation
 
 class ViewController: UIViewController {
+    
+    let locationManager = CLLocationManager()
+
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -51,12 +55,13 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private let gpsButton: UIButton = {
+    private lazy var gpsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "gpsIcon"), for: .normal)
+        button.addTarget(self, action: #selector(getGPSLocation), for: .touchUpInside)
         return button
     }()
-    
+
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.text = "22°"
@@ -267,6 +272,8 @@ class ViewController: UIViewController {
     @objc func searchCity(_ sender: UITextField) {
         let address = sender.text
         getCoordinate(address ?? "")
+    @objc func getGPSLocation() {
+        locationManager.startUpdatingLocation()
     }
 
     
@@ -275,16 +282,15 @@ class ViewController: UIViewController {
         setupUI()
         navigationItem.titleView = searchBar
         searchBar.searchTextField.addTarget(self, action: #selector(searchCity), for: .touchUpInside)
+        
+        setupLocationManager()
     }
-    
-
     
     func setBackgroundImage() {
         if let backgroundImage = UIImage(named: "backgroundSample") {
             self.view.layer.contents = backgroundImage.cgImage
         }
     }
-    
     
     func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
@@ -301,6 +307,11 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
+    func setupLocationManager() {
+           locationManager.delegate = self
+           locationManager.requestWhenInUseAuthorization()
+           locationManager.desiredAccuracy = kCLLocationAccuracyBest
+       }
     
     func setupUI() {
         setBackgroundImage()
@@ -572,5 +583,20 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         
 //        cell.setHour(indexPath.item * 3)
         return cell
+    }
+}
+
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            print("위도: \(latitude), 경도: \(longitude)")
+        }
+        locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error getting location: \(error.localizedDescription)")
     }
 }
