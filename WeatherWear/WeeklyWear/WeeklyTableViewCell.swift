@@ -218,4 +218,36 @@ extension WeeklyTableViewCell {
             make.top.equalTo(minMax.snp.bottom).inset(-10)
         }
     }
+    
+    func configureUI(_ weather1: WeatherInfo, _ weather2: WeatherInfo) {
+        
+        let date = weather1.date
+        var startindex = date.index(date.startIndex, offsetBy: 5)
+        var endindex = date.index(date.startIndex, offsetBy: 7)
+        let month = date.substring(with: startindex..<endindex)
+        startindex = date.index(date.startIndex, offsetBy: 8)
+        endindex = date.index(date.startIndex, offsetBy: 10)
+        let day = date.substring(with: startindex..<endindex)
+        weekDate.text = "\(month)월 \(day)일"
+        minMax.text = "최고 \(weather1.temp)° 최저\(weather2.temp)°"
+        amPercent.text = "\(weather1.pop)%"
+        pmPercent.text = "\(weather2.pop)%"
+        
+        switch weather1.weather {
+        case "Clear": amWeather.image = UIImage(named: "sunnyIcon")
+        case "Clouds": amWeather.image = UIImage(named: "cloudyIcon")
+        case "Rain": amWeather.image = UIImage(named: "rainIcon")
+        case "Snow": amWeather.image = UIImage(named: "snowyIcon")
+        default:
+            break
+        }
+        switch weather2.weather {
+        case "Clear": pmWeather.image = UIImage(named: "sunnyIcon")
+        case "Clouds": pmWeather.image = UIImage(named: "cloudyIcon")
+        case "Rain": pmWeather.image = UIImage(named: "rainIcon")
+        case "Snow": pmWeather.image = UIImage(named: "snowyIcon")
+        default:
+            break
+        }
+    }
 }

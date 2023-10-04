@@ -8,9 +8,9 @@
 import Foundation
 class UserInfo {
     
-    let isMetric: Bool
-    let city: String
-    let coldSensibility: Int
+    var isMetric: Bool
+    var city: String
+    var coldSensibility: Int
     
     init(isMetric: Bool, city: String, coldSensibility: Int) {
         self.isMetric = isMetric
@@ -19,3 +19,5 @@ class UserInfo {
     }
     
 }
+
+let user = UserInfo(isMetric: true, city: "서울특별시", coldSensibility: 0)

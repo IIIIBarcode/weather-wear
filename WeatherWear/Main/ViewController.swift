@@ -270,10 +270,7 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
-    @objc func searchCity(_ sender: UITextField) {
-        let address = sender.text
-        getCoordinate(address ?? "")
-    }
+    
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
@@ -283,7 +280,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
-        searchBar.searchTextField.addTarget(self, action: #selector(searchCity), for: .touchUpInside)
+        searchBar.delegate = self
         
         setupLocationManager()
     }
@@ -496,6 +493,7 @@ class ViewController: UIViewController {
                             lon = apilon.stringValue
                             self.getNowWeather()
                             self.getWeeklyWeather()
+                            
                         }
                         
                     }
@@ -544,7 +542,7 @@ class ViewController: UIViewController {
             
             // API에서 받아온 데이터를 파싱하여 WeatherInfo 객체로 변환하고 배열에 저장
             let list = json["list"] as! [[String: Any]]
-            weeklyWeather = []
+            weatherData = []
             for item in list{
                 let date = item["dt_txt"] as! String // 예보시간
                 let main = item["main"] as! [String : Any]
@@ -555,16 +553,19 @@ class ViewController: UIViewController {
                 let rain = item["rain"] as? [String: Any]
                 let precipitation = rain?["3h"] as? Double // 3시간당 강수량
                 let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
-                weeklyWeather.append(weatherinfo)
+                weatherData.append(weatherinfo)
             }
             
             
             
             // UI 업데이트는 메인 스레드에서 수행해야 함
             DispatchQueue.main.async {
+                updateWeeklyWeather()
                 self.collectionView.reloadData()
             }
         }.resume()
+        
+
     }
     
     func getAddress(_ lat: String, _ lon: String) {
@@ -587,7 +588,8 @@ class ViewController: UIViewController {
                     let name4 = region["area4"]["name"].stringValue
                     print("\(name1) \(name2) \(name3) \(name4)")
                     DispatchQueue.main.async {
-                        self.locationLabel.text = "\(name1) \(name2) \(name3) \(name4)"
+                        user.city = "\(name1) \(name2) \(name3) \(name4)"
+                        self.locationLabel.text = user.city
                     }
                 case .failure(let error):
                     let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
@@ -612,8 +614,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeatherHourCell", for: indexPath) as! WeatherHourCell
-        if !weeklyWeather.isEmpty {
-            let weather = weeklyWeather[indexPath.row]
+        if !weatherData.isEmpty {
+            let weather = weatherData[indexPath.row]
             cell.congigureUI(weather: weather)
         }
         else {
@@ -644,3 +646,10 @@ extension ViewController: CLLocationManagerDelegate {
     }
 }
 
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let address = searchBar.text
+        getCoordinate(address ?? "")
+    }
+}

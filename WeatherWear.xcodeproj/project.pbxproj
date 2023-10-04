@@ -10,6 +10,7 @@
 		1520213E2ACC5CC500140030 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1520213D2ACC5CC500140030 /* Alamofire */; };
 		152021412ACC5CCD00140030 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 152021402ACC5CCD00140030 /* SwiftyJSON */; };
 		1520214B2ACCF6E700140030 /* APIKEY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1520214A2ACCF6E700140030 /* APIKEY.swift */; };
+		1520214D2ACD31CA00140030 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1520214C2ACD31CA00140030 /* Date.swift */; };
 		154100F52AC1A69900828CB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154100F42AC1A69900828CB3 /* AppDelegate.swift */; };
 		154100F72AC1A69900828CB3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154100F62AC1A69900828CB3 /* SceneDelegate.swift */; };
 		154100F92AC1A69900828CB3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154100F82AC1A69900828CB3 /* ViewController.swift */; };
@@ -35,6 +36,7 @@
 
 /* Begin PBXFileReference section */
 		1520214A2ACCF6E700140030 /* APIKEY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKEY.swift; sourceTree = "<group>"; };
+		1520214C2ACD31CA00140030 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Date.swift; path = WeatherWear/Model/Date.swift; sourceTree = SOURCE_ROOT; };
 		154100F12AC1A69900828CB3 /* WeatherWear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherWear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		154100F42AC1A69900828CB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		154100F62AC1A69900828CB3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 		1541010A2AC1A84A00828CB3 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				1520214C2ACD31CA00140030 /* Date.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				154101152AC1A99D00828CB3 /* AccessoriesInfo.swift in Sources */,
 				686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */,
 				154101102AC1A91600828CB3 /* WeatherInfo.swift in Sources */,
+				1520214D2ACD31CA00140030 /* Date.swift in Sources */,
 				154100F92AC1A69900828CB3 /* ViewController.swift in Sources */,
 				154A780E2AC449FC00F94630 /* ItemTableViewCell.swift in Sources */,
 				686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */,
