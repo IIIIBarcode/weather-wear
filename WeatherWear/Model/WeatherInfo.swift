@@ -18,7 +18,7 @@ struct WeatherInfo { //구의강변로 94
 var lat = ""
 var lon = ""
 
-
+var weatherBackgroundName = "Clear"
 var nowWeather = WeatherInfo(temp: 0, date: "", weather: "", precipitation: 0, pop: 0)
 var weatherData: [WeatherInfo] = []
 var weeklyWeather: [WeatherInfo] = []

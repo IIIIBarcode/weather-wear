@@ -8,11 +8,7 @@
 import UIKit
 
 class SurveyViewController: UIViewController {
-    let itemgroup = [["a타입 1번", "a타입 2번", "a타입 3번", "a타입 3번", "a타입 4번", "a타입 5번", "a타입 6번"],
-                     ["b타입 1번", "b타입 2번", "b타입 3번"],
-                     ["c타입 1번", "c타입 2번"],
-                     ["d타입 1번", "d타입 2번", "d타입 3번", "d타입 4번"],
-    ]
+   
     var selection: Int!
     
     override func viewDidLoad() {
@@ -21,14 +17,8 @@ class SurveyViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    func setBackgroundImage() {
-        if let backgroundImage = UIImage(named: "backgroundSample") {
-            self.view.layer.contents = backgroundImage.cgImage
-        }
-    }
-    
     func configureUI() {
-        setBackgroundImage()
+        setBackgroundImage(weatherBackgroundName)
         let iconImage = UIImageView()
         view.addSubview(iconImage)
         iconImage.image = UIImage(named: "dashicons_welcome-write-blog")

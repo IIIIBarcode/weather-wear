@@ -83,7 +83,7 @@ class WeeklyWearViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         makeUi()
-        setBackgroundImage()
+        setBackgroundImage(weatherBackgroundName)
         setting()
         setupLocationManager()
     }
@@ -130,11 +130,6 @@ extension WeeklyWearViewController {
         navigationItem.titleView = searchBar
     }
 
-    func setBackgroundImage() {
-        if let backgroundImage = UIImage(named: "backgroundSample") {
-            view.layer.contents = backgroundImage.cgImage
-        }
-    }
 
     func makeUi() {
         location.snp.makeConstraints { make in
