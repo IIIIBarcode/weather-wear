@@ -7,12 +7,14 @@
 
 import UIKit
 import SnapKit
+import SwiftyJSON
+import Alamofire
 import CoreLocation
 
 class ViewController: UIViewController {
     
     let locationManager = CLLocationManager()
-
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -61,7 +63,7 @@ class ViewController: UIViewController {
         button.addTarget(self, action: #selector(getGPSLocation), for: .touchUpInside)
         return button
     }()
-
+    
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.text = "22°"
@@ -269,14 +271,17 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(feedbackViewController, animated: true)
     }
     
+    
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         navigationItem.titleView = searchBar
+        searchBar.delegate = self
         
         setupLocationManager()
     }
@@ -303,10 +308,10 @@ class ViewController: UIViewController {
     }
     
     func setupLocationManager() {
-           locationManager.delegate = self
-           locationManager.requestWhenInUseAuthorization()
-           locationManager.desiredAccuracy = kCLLocationAccuracyBest
-       }
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
     
     func setupUI() {
         setBackgroundImage()
@@ -459,7 +464,149 @@ class ViewController: UIViewController {
             make.bottom.equalTo(contentView).offset(-20)
         }
     }
+    //제주
+    
+    func getCoordinate(_ address: String) {
+        
+        let NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="
+        let encodeAddress = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(NAVER_GEOCODE_URL + encodeAddress, method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    let json = JSON(value)
+                    let data = json["addresses"]
+                    let ad = data[0]["roadAddress"]
+                    let apilat = data[0]["y"]
+                    let apilon = data[0]["x"]
+                    DispatchQueue.main.async{
+                        if ad.stringValue == "" {
+                            let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "OK", style: .default)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true)
+                        }
+                        else{
+                            self.locationLabel.text = ad.stringValue
+                            lat = apilat.stringValue
+                            lon = apilon.stringValue
+                            self.getNowWeather()
+                            self.getWeeklyWeather()
+                            
+                        }
+                        
+                    }
+                    //제주
+                case .failure(let error):
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
+    }
+    
+    func getNowWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            let weather = json["weather"] as? [[String: Any]]
+            let weatherState = weather?[0]["main"] as? String
+            let main = json["main"] as! [String: Any]
+            let temp = main["temp"] as? Double
+            let tempMin = main["temp_min"] as? Double
+            let tempMax = main["temp_max"] as? Double
+            
+            DispatchQueue.main.async {
+                self.temperatureLabel.text = "\(Int(temp!))°"
+                self.highestTemperatureLabel.text = "최고 \(Int(tempMax!))°"
+                self.lowestTemperatureLabel.text = "최저 \(Int(tempMin!))°"
+            }//구의동
+        }.resume()
+    }
+    
+    func getWeeklyWeather() {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
+        ) else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                return}
+            
+            
+            // API에서 받아온 데이터를 파싱하여 WeatherInfo 객체로 변환하고 배열에 저장
+            let list = json["list"] as! [[String: Any]]
+            weatherData = []
+            for item in list{
+                let date = item["dt_txt"] as! String // 예보시간
+                let main = item["main"] as! [String : Any]
+                let temp = main["temp"] as! Double //기온
+                let weather = item["weather"] as! [[String: Any]]
+                let weatherState = weather[0]["main"] as! String // 날씨상태
+                let pop = item["pop"] as! Double //강수확률
+                let rain = item["rain"] as? [String: Any]
+                let precipitation = rain?["3h"] as? Double // 3시간당 강수량
+                let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
+                weatherData.append(weatherinfo)
+            }
+            
+            
+            
+            // UI 업데이트는 메인 스레드에서 수행해야 함
+            DispatchQueue.main.async {
+                updateWeeklyWeather()
+                self.collectionView.reloadData()
+            }
+        }.resume()
+        
+
+    }
+    
+    func getAddress(_ lat: String, _ lon: String) {
+        let Reverse_NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords="
+        let latlon = lon + "," + lat
+        let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: Reverse_NAVER_CLIENT_ID)
+        let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: Reverse_NAVER_CLIENT_SECRET)
+        let headers = HTTPHeaders([header1,header2])
+        AF.request(Reverse_NAVER_GEOCODE_URL + "\(latlon)&output=json", method: .get,headers: headers).validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value as [String:Any]):
+                    print("성공")
+                    let json = JSON(value)
+                    let results = json["results"]
+                    let region = results[0]["region"]
+                    let name1 = region["area1"]["name"].stringValue
+                    let name2 = region["area2"]["name"].stringValue
+                    let name3 = region["area3"]["name"].stringValue
+                    let name4 = region["area4"]["name"].stringValue
+                    print("\(name1) \(name2) \(name3) \(name4)")
+                    DispatchQueue.main.async {
+                        user.city = "\(name1) \(name2) \(name3) \(name4)"
+                        self.locationLabel.text = user.city
+                    }
+                case .failure(let error):
+                    let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true)
+                    print(error.errorDescription ?? "")
+                default :
+                    fatalError()
+                }
+            }
+    }
 }
+
+
 
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -469,8 +616,14 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WeatherHourCell", for: indexPath) as! WeatherHourCell
+        if !weatherData.isEmpty {
+            let weather = weatherData[indexPath.row]
+            cell.congigureUI(weather: weather)
+        }
+        else {
+            cell.setHour(indexPath.item * 3)
+        }
         
-        cell.setHour(indexPath.item * 3)
         return cell
     }
 }
@@ -480,12 +633,25 @@ extension ViewController: CLLocationManagerDelegate {
         if let location = locations.last {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
+            lat = String(latitude)
+            lon = String(longitude)
+            getAddress(lat, lon)
+            getNowWeather()
+            getWeeklyWeather()
             print("위도: \(latitude), 경도: \(longitude)")
         }
         locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location: \(error.localizedDescription)")
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let address = searchBar.text
+        getCoordinate(address ?? "")
     }
 }

@@ -37,7 +37,8 @@ class WeeklyWearViewController: UIViewController {
 
     lazy var location: UILabel = {
         let lb = UILabel()
-        lb.text = "서울특별시"
+//        lb.text = "서울특별시"
+        lb.text = user.city
         lb.font = .systemFont(ofSize: 40, weight: .bold)
         lb.textColor = .white
         lb.textAlignment = .left
@@ -86,6 +87,10 @@ class WeeklyWearViewController: UIViewController {
         setting()
         setupLocationManager()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        weakTable.reloadData()
+    }
 }
 
 extension WeeklyWearViewController: UISearchResultsUpdating {
@@ -94,11 +99,14 @@ extension WeeklyWearViewController: UISearchResultsUpdating {
 
 extension WeeklyWearViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return weeklyWeather.count/2
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeekCell", for: indexPath) as! WeeklyTableViewCell // 사용자 정의 셀 클래스로 캐스팅해야 합니다.
+        let weather1 = weeklyWeather[indexPath.row * 2]
+        let weather2 = weeklyWeather[indexPath.row * 2 + 1]
+        cell.configureUI(weather1, weather2)
         cell.selectionStyle = .none
         return cell
     }
