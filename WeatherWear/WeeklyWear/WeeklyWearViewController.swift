@@ -103,6 +103,7 @@ class WeeklyWearViewController: UIViewController {
         } else if isMetricBtn.selectedSegmentIndex == 1 {
             user.isMetric = false
         }
+        UserManager.shared.SaveUser()
         weakTable.reloadData()
     }
 }

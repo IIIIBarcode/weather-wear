@@ -6,7 +6,7 @@
 //
 
 import Foundation
-class UserInfo {
+class UserInfo: Codable {
     
     var isMetric: Bool
     var city: String
@@ -20,4 +20,26 @@ class UserInfo {
     
 } 
 
-let user = UserInfo(isMetric: true, city: "서울특별시", coldSensibility: 0)
+var user = UserInfo(isMetric: true, city: "서울특별시", coldSensibility: 0)
+
+class UserManager {
+    static let shared = UserManager() // Singleton instance
+    let encoder = JSONEncoder()
+    func SaveUser() {
+        if let encodedUser = try? encoder.encode(user) {
+            UserDefaults.standard.set(encodedUser, forKey: "User")
+        }
+    }
+    
+    func LoadUser() {
+        if let savedUser = UserDefaults.standard.object(forKey: "User") as? Data {
+            let decoder = JSONDecoder()
+            if let savedObject = try? decoder.decode(UserInfo.self, from: savedUser) {
+                user = savedObject
+            }
+        }
+    }
+        
+        
+    
+}
