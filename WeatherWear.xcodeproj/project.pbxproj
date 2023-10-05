@@ -28,7 +28,7 @@
 		15B3DEEF2AC6AB530057580C /* DoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B3DEEE2AC6AB530057580C /* DoneViewController.swift */; };
 		686F302B2AC2A3AA001A3E4C /* FeedbackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */; };
 		686F30342AC3ED93001A3E4C /* WeeklyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */; };
-		686F30582ACE7E8B001A3E4C /* APIKEY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F30572ACE7E8B001A3E4C /* APIKEY.swift */; };
+		686F305E2ACECB68001A3E4C /* APIKEY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F305D2ACECB68001A3E4C /* APIKEY.swift */; };
 		689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */; };
 		689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689BC5C32AC26010005BA3A2 /* TapbarController.swift */; };
 		D80B335F2ACC3552003158D8 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D80B335E2ACC3551003158D8 /* CoreLocation.framework */; };
@@ -56,7 +56,7 @@
 		15B3DEEE2AC6AB530057580C /* DoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoneViewController.swift; sourceTree = "<group>"; };
 		686F302A2AC2A3AA001A3E4C /* FeedbackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewController.swift; sourceTree = SOURCE_ROOT; };
 		686F30332AC3ED93001A3E4C /* WeeklyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTableViewCell.swift; sourceTree = "<group>"; };
-		686F30572ACE7E8B001A3E4C /* APIKEY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKEY.swift; sourceTree = "<group>"; };
+		686F305D2ACECB68001A3E4C /* APIKEY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKEY.swift; sourceTree = "<group>"; };
 		689BC5C12AC25FA4005BA3A2 /* WeeklyWearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWearViewController.swift; sourceTree = "<group>"; };
 		689BC5C32AC26010005BA3A2 /* TapbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapbarController.swift; sourceTree = "<group>"; };
 		D80B335E2ACC3551003158D8 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -168,7 +168,7 @@
 				154101122AC1A97600828CB3 /* ClotheInfo.swift */,
 				154101142AC1A99D00828CB3 /* AccessoriesInfo.swift */,
 				154101162AC1A9C000828CB3 /* UserInfo.swift */,
-				686F30572ACE7E8B001A3E4C /* APIKEY.swift */,
+				686F305D2ACECB68001A3E4C /* APIKEY.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -263,7 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				686F30582ACE7E8B001A3E4C /* APIKEY.swift in Sources */,
+				686F305E2ACECB68001A3E4C /* APIKEY.swift in Sources */,
 				15B3DEEF2AC6AB530057580C /* DoneViewController.swift in Sources */,
 				689BC5C22AC25FA4005BA3A2 /* WeeklyWearViewController.swift in Sources */,
 				689BC5C42AC26010005BA3A2 /* TapbarController.swift in Sources */,

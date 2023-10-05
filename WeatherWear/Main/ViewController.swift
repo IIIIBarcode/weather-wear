@@ -13,7 +13,8 @@ import UIKit
 
 class ViewController: UIViewController {
     let locationManager = CLLocationManager()
-    
+    let refreshControl = UIRefreshControl()
+
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -217,7 +218,7 @@ class ViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: self.view.frame.width / 8, height: 120)
+        layout.itemSize = CGSize(width: self.view.frame.width/8, height: 120)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
@@ -267,7 +268,15 @@ class ViewController: UIViewController {
         let feedbackViewController = FeedbackViewController()
         navigationController?.pushViewController(feedbackViewController, animated: true)
     }
-    
+
+    @objc func refreshData() {
+        // 여기에 데이터를 다시 불러오고 뷰를 업데이트하는 작업을 수행합니다.
+        locationManager.startUpdatingLocation()
+        // 갱신이 완료되면 아래 코드로 새로 고침을 종료합니다.
+        refreshControl.endRefreshing()
+        print("새로고침")
+    }
+
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
@@ -299,7 +308,6 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         updateUI()
         temperatureSegmentedControl.selectedSegmentIndex = user.isMetric ? 0 : 1
-
     }
     
     func updateUI() {
@@ -320,9 +328,9 @@ class ViewController: UIViewController {
             lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
         }
         else {
-            temperatureLabel.text = "\(nowWeather.temp*5/9+32)°"
-            highestTemperatureLabel.text = "최고 \(nowTempMax*5/9+32)°"
-            lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9+32)°"
+            temperatureLabel.text = "\(nowWeather.temp*5/9 + 32)°"
+            highestTemperatureLabel.text = "최고 \(nowTempMax*5/9 + 32)°"
+            lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9 + 32)°"
         }
     }
     
@@ -394,7 +402,8 @@ class ViewController: UIViewController {
         feedbackButton.addSubview(iconImageView)
         feedbackButton.addSubview(feedbackRecommendationLabel)
         scrollView.contentInsetAdjustmentBehavior = .never
-        
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        scrollView.addSubview(refreshControl)
         setupConstraints()
     }
     
@@ -576,7 +585,7 @@ class ViewController: UIViewController {
             let tempMin = main["temp_min"] as? Double
             let tempMax = main["temp_max"] as? Double
             let rain = json["rain"] as? [String: Double]
-            let precipitation = (rain?["1h"] ?? 0) * 100
+            let precipitation = (rain?["1h"] ?? 0)*100
             
             DispatchQueue.main.async {
                 nowWeather.temp = Int(temp!)
@@ -592,9 +601,9 @@ class ViewController: UIViewController {
                     self.lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
                 }
                 else {
-                    self.temperatureLabel.text = "\(nowWeather.temp*5/9+32)°"
-                    self.highestTemperatureLabel.text = "최고 \(nowTempMax*5/9+32)°"
-                    self.lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9+32)°"
+                    self.temperatureLabel.text = "\(nowWeather.temp*5/9 + 32)°"
+                    self.highestTemperatureLabel.text = "최고 \(nowTempMax*5/9 + 32)°"
+                    self.lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9 + 32)°"
                 }
                 
                 weatherBackgroundName = weatherState
@@ -742,7 +751,7 @@ class ViewController: UIViewController {
                 let pop = item["pop"] as! Double // 강수확률
                 let rain = item["rain"] as? [String: Any]
                 let precipitation = rain?["3h"] as? Double // 3시간당 강수량
-                let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
+                let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0)*100), pop: Int(pop*100))
                 weatherData.append(weatherinfo)
             }
             
@@ -800,7 +809,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             cell.congigureUI(weather: weather)
         }
         else {
-            cell.setHour(indexPath.item * 3)
+            cell.setHour(indexPath.item*3)
         }
         
         return cell
