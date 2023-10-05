@@ -19,7 +19,7 @@ class FeedbackViewController: UIViewController {
     
     
     func ConfigureUI() {
-        setBackgroundImage(weatherBackgroundName)
+        setBackgroundImage(nowWeather.weather)
         view.backgroundColor = .black
         let iconImage = UIImageView()
         view.addSubview(iconImage)
@@ -204,6 +204,7 @@ class FeedbackViewController: UIViewController {
         else if tempToday < 23 && tempToday >= 20 {
             groupNumber = 2
         }
+        
         else if tempToday < 20 && tempToday >= 17 {
             groupNumber = 3
         }

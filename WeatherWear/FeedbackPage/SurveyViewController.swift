@@ -18,7 +18,7 @@ class SurveyViewController: UIViewController {
     }
     
     func configureUI() {
-        setBackgroundImage(weatherBackgroundName)
+        setBackgroundImage(nowWeather.weather)
         let iconImage = UIImageView()
         view.addSubview(iconImage)
         iconImage.image = UIImage(named: "dashicons_welcome-write-blog")
