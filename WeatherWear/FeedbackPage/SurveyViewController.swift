@@ -140,6 +140,7 @@ extension SurveyViewController: UITableViewDelegate, UITableViewDataSource {
             }
             return content
         }()
+        cell.numberingLabel.text = "\(indexPath.row + 1)."
         cell.itemLabel.text = content
         return cell
     }

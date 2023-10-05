@@ -280,7 +280,8 @@ class ViewController: UIViewController {
             user.isMetric = false
         }
         
-        print(user.isMetric)
+        updateCF()
+        collectionView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -305,14 +306,25 @@ class ViewController: UIViewController {
     func updateUI() {
         setBackgroundImage(nowWeather.weather)
         locationLabel.text = user.city
-        temperatureLabel.text = "\(nowWeather.temp)°"
-        highestTemperatureLabel.text = "\(nowTempMax)°"
-        lowestTemperatureLabel.text = "\(nowTempMin)°"
+        updateCF()
         getWeatherIcon(nowWeather.weather)
         clothesItemsLabel.text = getClotheContent(nowWeather.temp)
         belongingsItemsLabel.text = getAccContent(nowWeather.weather)
         weatherCommentLabel.text = getWeaterComment(nowWeather.weather, nowTempMax, nowTempMin, nowWeather.precipitation)
         collectionView.reloadData()
+    }
+    
+    func updateCF() {
+        if user.isMetric == true {
+            temperatureLabel.text = "\(nowWeather.temp)°"
+            highestTemperatureLabel.text = "\(nowTempMax)°"
+            lowestTemperatureLabel.text = "\(nowTempMin)°"
+        }
+        else {
+            temperatureLabel.text = "\(nowWeather.temp*5/9+32)°"
+            highestTemperatureLabel.text = "\(nowTempMax*5/9+32)°"
+            lowestTemperatureLabel.text = "\(nowTempMin*5/9+32)°"
+        }
     }
     
 //    func setBackgroundImage() {
@@ -665,7 +677,7 @@ class ViewController: UIViewController {
         var content = ""
         switch weather {
         case "Clouds": if maxTemperature > 20 {
-                content = "오늘은 최고 (maxTemperature)°C에 구름이 조금 있을 예정이에요. 피크닉 가기 좋은 날씨네요! 피크닉 가기 좋은 날씨네요! 구름이 많은 하늘 아래, 야외 카페에서 브런치를 즐겨보는 건 어떨까요?"
+                content = "오늘은 최고 \(maxTemperature)°C에 구름이 조금 있을 예정이에요. 피크닉 가기 좋은 날씨네요! 피크닉 가기 좋은 날씨네요! 구름이 많은 하늘 아래, 야외 카페에서 브런치를 즐겨보는 건 어떨까요?"
             }
             else if maxTemperature < 10 {
                 content = "오늘은 최고 \(maxTemperature)°C에 구름이 많을 것으로 예상됩니다. 따뜻한 스카프와 함께 산책을 즐겨보세요. 구름이 많은 날, 아늑한 카페에서 창밖을 바라보며 차를 마시는 것도 좋겠네요."
