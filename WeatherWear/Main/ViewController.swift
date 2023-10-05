@@ -5,14 +5,13 @@
 //  Created by Future on 2023/09/25.
 //
 
-import UIKit
-import SnapKit
-import SwiftyJSON
 import Alamofire
 import CoreLocation
+import SnapKit
+import SwiftyJSON
+import UIKit
 
 class ViewController: UIViewController {
-    
     let locationManager = CLLocationManager()
     
     private lazy var scrollView: UIScrollView = {
@@ -72,7 +71,7 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private let temperatureSegmentedControl: UISegmentedControl = {
+    private lazy var temperatureSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["⠀⠀⠀°C⠀⠀⠀", "⠀⠀⠀°F⠀⠀⠀"])
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = .white.withAlphaComponent(0.15)
@@ -84,7 +83,7 @@ class ViewController: UIViewController {
         // 선택된 부분 설정
         let selectedTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         segmentedControl.setTitleTextAttributes(selectedTextAttributes, for: .selected)
-        
+        segmentedControl.addTarget(self, action: #selector(switchTemp), for: .valueChanged)
         return segmentedControl
     }()
     
@@ -131,8 +130,6 @@ class ViewController: UIViewController {
         return label
     }()
     
-    
-    
     // "오늘의 소지품" 타이틀 레이블
     private let belongingsTitleLabel: UILabel = {
         let label = UILabel()
@@ -164,7 +161,6 @@ class ViewController: UIViewController {
         view.backgroundColor = .white
         return view
     }()
-    
     
     // 날씨 정보를 담을 뷰
     private let weatherInfoContainerView: UIView = {
@@ -266,18 +262,26 @@ class ViewController: UIViewController {
         return label
     }()
     
-    
     @objc func clickBtn() {
         //        guard let feedbackViewController = self.storyboard?.instantiateViewController(withIdentifier: "Feedback") else {return}
         let feedbackViewController = FeedbackViewController()
-        self.navigationController?.pushViewController(feedbackViewController, animated: true)
+        navigationController?.pushViewController(feedbackViewController, animated: true)
     }
-    
     
     @objc func getGPSLocation() {
         locationManager.startUpdatingLocation()
     }
-    
+
+    @objc func switchTemp() {
+        if temperatureSegmentedControl.selectedSegmentIndex == 0 {
+            user.isMetric = true
+        }
+        else if temperatureSegmentedControl.selectedSegmentIndex == 1 {
+            user.isMetric = false
+        }
+        
+        print(user.isMetric)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -285,13 +289,17 @@ class ViewController: UIViewController {
         navigationItem.titleView = searchBar
         searchBar.delegate = self
         setupLocationManager()
+        temperatureSegmentedControl.selectedSegmentIndex = user.isMetric ? 0 : 1
         locationManager.startUpdatingLocation()
         print("배경화면 변경 해놓기")
         print("멘트 설정하기")
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         updateUI()
+        temperatureSegmentedControl.selectedSegmentIndex = user.isMetric ? 0 : 1
+
     }
     
     func updateUI() {
@@ -326,7 +334,6 @@ class ViewController: UIViewController {
 //        }
 //    }
     
-    
     func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -352,7 +359,7 @@ class ViewController: UIViewController {
         setBackgroundImage(weatherBackgroundName)
         setupNavigationBarAppearance()
         
-        self.view.addSubview(scrollView)
+        view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(searchBar)
         contentView.addSubview(locationLabel)
@@ -371,7 +378,7 @@ class ViewController: UIViewController {
         weatherInfoContainerView.addSubview(weatherCommentLabel)
         contentView.addSubview(feedbackButton)
         contentView.addSubview(collectionView)
-        self.view.bringSubviewToFront(scrollView)
+        view.bringSubviewToFront(scrollView)
         contentView.addSubview(feedbackButton)
         feedbackButton.addSubview(iconImageView)
         feedbackButton.addSubview(feedbackRecommendationLabel)
@@ -379,7 +386,6 @@ class ViewController: UIViewController {
         
         setupConstraints()
     }
-    
     
     func setupConstraints() {
         scrollView.snp.makeConstraints { make in
@@ -499,46 +505,44 @@ class ViewController: UIViewController {
             make.bottom.equalTo(contentView).offset(-20)
         }
     }
-    //제주
+
+    // 제주
     
     func getCoordinate(_ address: String) {
-        
         let NAVER_GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="
         let encodeAddress = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: NAVER_CLIENT_ID)
         let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: NAVER_CLIENT_SECRET)
-        let headers = HTTPHeaders([header1,header2])
-        AF.request(NAVER_GEOCODE_URL + encodeAddress, method: .get,headers: headers).validate()
+        let headers = HTTPHeaders([header1, header2])
+        AF.request(NAVER_GEOCODE_URL + encodeAddress, method: .get, headers: headers).validate()
             .responseJSON { response in
                 switch response.result {
-                case .success(let value as [String:Any]):
+                case .success(let value as [String: Any]):
                     let json = JSON(value)
                     let data = json["addresses"]
                     let ad = data[0]["roadAddress"]
                     let apilat = data[0]["y"]
                     let apilon = data[0]["x"]
-                    DispatchQueue.main.async{
+                    DispatchQueue.main.async {
                         if ad.stringValue == "" {
                             let alert = UIAlertController(title: nil, message: "주소를 제대로 입력하세요 \n 국내만 제공됩니다.", preferredStyle: .alert)
                             let ok = UIAlertAction(title: "OK", style: .default)
                             alert.addAction(ok)
                             self.present(alert, animated: true)
                         }
-                        else{
+                        else {
 //                            self.locationLabel.text = ad.stringValue
                             user.city = ad.stringValue
                             lat = apilat.stringValue
                             lon = apilon.stringValue
                             self.getNowWeather()
                             self.getWeeklyWeather()
-                            
                         }
-                        
                     }
-                    //제주
+                // 제주
                 case .failure(let error):
                     print(error.errorDescription ?? "")
-                default :
+                default:
                     fatalError()
                 }
             }
@@ -547,11 +551,13 @@ class ViewController: UIViewController {
     func getNowWeather() {
         guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
         ) else { return }
-        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let self = self,
                   let data = data,
-                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                return}
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            else {
+                return
+            }
             let weather = json["weather"] as? [[String: Any]]
             let weatherState = weather?[0]["main"] as! String
             let main = json["main"] as! [String: Any]
@@ -579,10 +585,9 @@ class ViewController: UIViewController {
                 self.belongingsItemsLabel.text = self.getAccContent(weatherBackgroundName)
                 self.weatherCommentLabel.text = self.getWeaterComment(weatherBackgroundName, Int(tempMax!), Int(tempMin!), Int(precipitation))
                 self.getWeatherIcon(weatherBackgroundName)
-            }//구의동
+            } // 구의동
         }.resume()
     }
-    
     
     func getClotheContent(_ tempToday: Int) -> String {
         var content = ""
@@ -611,7 +616,7 @@ class ViewController: UIViewController {
         else {
             groupNumber = 7
         }
-        //추가될 내용
+        // 추가될 내용
         groupNumber += user.coldSensibility
         if groupNumber > 7 {
             groupNumber = 7
@@ -619,7 +624,7 @@ class ViewController: UIViewController {
         else if groupNumber < 0 {
             groupNumber = 0
         }
-        for item in itemgroup[groupNumber]{
+        for item in itemgroup[groupNumber] {
             content += "\(item)\n"
         }
         return content
@@ -660,8 +665,8 @@ class ViewController: UIViewController {
         var content = ""
         switch weather {
         case "Clouds": if maxTemperature > 20 {
-            content = "오늘은 최고 (maxTemperature)°C에 구름이 조금 있을 예정이에요. 피크닉 가기 좋은 날씨네요! 피크닉 가기 좋은 날씨네요! 구름이 많은 하늘 아래, 야외 카페에서 브런치를 즐겨보는 건 어떨까요?"
-        }
+                content = "오늘은 최고 (maxTemperature)°C에 구름이 조금 있을 예정이에요. 피크닉 가기 좋은 날씨네요! 피크닉 가기 좋은 날씨네요! 구름이 많은 하늘 아래, 야외 카페에서 브런치를 즐겨보는 건 어떨까요?"
+            }
             else if maxTemperature < 10 {
                 content = "오늘은 최고 \(maxTemperature)°C에 구름이 많을 것으로 예상됩니다. 따뜻한 스카프와 함께 산책을 즐겨보세요. 구름이 많은 날, 아늑한 카페에서 창밖을 바라보며 차를 마시는 것도 좋겠네요."
             }
@@ -669,8 +674,8 @@ class ViewController: UIViewController {
                 content = "흐린 날도 그 특별한 매력이 있어요. 구름이 덮인 하늘을 구경하며 차분한 시간을 보내보세요. 구름이 뭉게뭉게 덮인 날에는 조용한 카페에서 책을 읽는 것도 좋겠죠?"
             }
         case "Rain": if precipitation > 20 {
-            content = "오늘은 강한 비가 예상됩니다. \(precipitation)mm의 비가 내릴 것으로 예상되니, 외출 시 우산은 필수입니다! 비가 많이 올 것 같으니, 집에서 릴렉스하는 시간을 가져보는 건 어떨까요?"
-        }
+                content = "오늘은 강한 비가 예상됩니다. \(precipitation)mm의 비가 내릴 것으로 예상되니, 외출 시 우산은 필수입니다! 비가 많이 올 것 같으니, 집에서 릴렉스하는 시간을 가져보는 건 어떨까요?"
+            }
             else if precipitation < 5 {
                 content = "오늘은 약간의 빗방울이 떨어질 것으로 예상됩니다. \(precipitation)mm 정도의 가벼운 비를 대비해 가볍게 준비하세요. 가벼운 비가 내릴 예정이니, 북카페에서 조용한 시간을 보내는 것도 좋을 것 같아요."
             }
@@ -678,13 +683,13 @@ class ViewController: UIViewController {
                 content = "오늘은 \(precipitation)mm의 비가 예상됩니다. 우산을 꼭 챙기세요. 창밖의 비를 감상하며 카페에서 커피를 마시는 것도 좋겠네요. 비가 내릴 예정이니, 집에서 편하게 영화나 드라마를 즐겨보세요."
             }
         case "Clear": if maxTemperature > 20 {
-            content = "오늘은 최고 \(maxTemperature)°C까지 올라가는 따뜻한 날씨네요. 외출하기 좋은 날! 근처 공원에서 산책을 즐겨보세요. 오늘 기온이 \(maxTemperature)°C까지 올라가니, 카페 테라스에서 커피를 즐기는 것도 좋겠네요."
-        }
+                content = "오늘은 최고 \(maxTemperature)°C까지 올라가는 따뜻한 날씨네요. 외출하기 좋은 날! 근처 공원에서 산책을 즐겨보세요. 오늘 기온이 \(maxTemperature)°C까지 올라가니, 카페 테라스에서 커피를 즐기는 것도 좋겠네요."
+            }
             else if maxTemperature < 10 {
                 content = "오늘은 최고 \(maxTemperature)°C까지만 올라가는 시원한 날씨입니다. 따뜻한 아우터를 준비하고, 북카페에서 차를 즐겨보세요. 오늘의 기온은 \(minTemperature)°C에서 \(maxTemperature)°C 사이로 예상됩니다. 코트와 함께 가까운 도서관에서 조용한 시간을 보내보세요."
             }
             else {
-               content = "오늘 날씨가 정말 좋아서 밖에 나가기 딱 좋은 날이에요! 햇빛이 화사한 날에는 야외 운동을 즐기면 기분도 좋아지죠! "
+                content = "오늘 날씨가 정말 좋아서 밖에 나가기 딱 좋은 날이에요! 햇빛이 화사한 날에는 야외 운동을 즐기면 기분도 좋아지죠! "
             }
         case "Snow": content = "오늘은 \(precipitation)mm의 눈이 예상됩니다. 눈사람을 만들러 나가볼까요? 눈이 내릴 예정이에요. 따뜻한 코코아를 준비하고, 눈 내리는 풍경을 감상해보세요."
         case "Thunderstorm": content = "오늘은 천둥번개가 예상됩니다. 외출 시 우산은 필수입니다! 급한 일이 아니라면 외출을 삼가하고 집에서 안전하게 휴식시간을 보내는 것은 어떨까요?"
@@ -698,30 +703,29 @@ class ViewController: UIViewController {
         guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(openweatherApiKey)&units=metric"
         ) else { return }
         
-        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let self = self,
                   let data = data,
-                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                return}
-            
+                  let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            else {
+                return
+            }
             
             // API에서 받아온 데이터를 파싱하여 WeatherInfo 객체로 변환하고 배열에 저장
             let list = json["list"] as! [[String: Any]]
             weatherData = []
-            for item in list{
+            for item in list {
                 let date = item["dt_txt"] as! String // 예보시간
-                let main = item["main"] as! [String : Any]
-                let temp = main["temp"] as! Double //기온
+                let main = item["main"] as! [String: Any]
+                let temp = main["temp"] as! Double // 기온
                 let weather = item["weather"] as! [[String: Any]]
                 let weatherState = weather[0]["main"] as! String // 날씨상태
-                let pop = item["pop"] as! Double //강수확률
+                let pop = item["pop"] as! Double // 강수확률
                 let rain = item["rain"] as? [String: Any]
                 let precipitation = rain?["3h"] as? Double // 3시간당 강수량
                 let weatherinfo = WeatherInfo(temp: Int(temp), date: date, weather: weatherState, precipitation: Int((precipitation ?? 0) * 100), pop: Int(pop * 100))
                 weatherData.append(weatherinfo)
             }
-            
-            
             
             // UI 업데이트는 메인 스레드에서 수행해야 함
             DispatchQueue.main.async {
@@ -729,8 +733,6 @@ class ViewController: UIViewController {
                 self.collectionView.reloadData()
             }
         }.resume()
-        
-
     }
     
     func getAddress(_ lat: String, _ lon: String) {
@@ -738,11 +740,11 @@ class ViewController: UIViewController {
         let latlon = lon + "," + lat
         let header1 = HTTPHeader(name: "X-NCP-APIGW-API-KEY-ID", value: Reverse_NAVER_CLIENT_ID)
         let header2 = HTTPHeader(name: "X-NCP-APIGW-API-KEY", value: Reverse_NAVER_CLIENT_SECRET)
-        let headers = HTTPHeaders([header1,header2])
-        AF.request(Reverse_NAVER_GEOCODE_URL + "\(latlon)&output=json", method: .get,headers: headers).validate()
+        let headers = HTTPHeaders([header1, header2])
+        AF.request(Reverse_NAVER_GEOCODE_URL + "\(latlon)&output=json", method: .get, headers: headers).validate()
             .responseJSON { response in
                 switch response.result {
-                case .success(let value as [String:Any]):
+                case .success(let value as [String: Any]):
                     print("성공")
                     let json = JSON(value)
                     let results = json["results"]
@@ -762,15 +764,12 @@ class ViewController: UIViewController {
                     alert.addAction(ok)
                     self.present(alert, animated: true)
                     print(error.errorDescription ?? "")
-                default :
+                default:
                     fatalError()
                 }
             }
     }
 }
-
-
-
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -812,7 +811,6 @@ extension ViewController: CLLocationManagerDelegate {
 }
 
 extension ViewController: UISearchBarDelegate {
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let address = searchBar.text
         getCoordinate(address ?? "")
