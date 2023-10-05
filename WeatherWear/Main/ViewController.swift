@@ -271,7 +271,8 @@ class ViewController: UIViewController {
 
     @objc func refreshData() {
         // 여기에 데이터를 다시 불러오고 뷰를 업데이트하는 작업을 수행합니다.
-        locationManager.startUpdatingLocation()
+        self.getNowWeather()
+        self.getWeeklyWeather()
         // 갱신이 완료되면 아래 코드로 새로 고침을 종료합니다.
         refreshControl.endRefreshing()
         print("새로고침")
