@@ -16,7 +16,7 @@ extension UIViewController {
         case "Clouds": imageName = "cloudyBackground"
         case "Rain": imageName = "rainyBackground"
         case "Snow": imageName = "snowyBackground"
-        case "Thunderstorm": imageName = "thnderstormBackground"
+        case "Thunderstorm": imageName = "thunderstrormBackground"
         case "Drizzle": imageName = "drizzleBackground"
         default: imageName = "cloudyBackground"
         }
