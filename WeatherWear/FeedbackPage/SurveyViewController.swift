@@ -74,6 +74,7 @@ class SurveyViewController: UIViewController {
             let doneViewController = DoneViewController()
             let groupNumber = getGroupNumber(nowWeather.temp)
             user.coldSensibility = selection - groupNumber
+            UserManager.shared.SaveUser()
             self.navigationController?.pushViewController(doneViewController, animated: true)
         }
         else {

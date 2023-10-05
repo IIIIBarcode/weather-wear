@@ -279,21 +279,20 @@ class ViewController: UIViewController {
         else if temperatureSegmentedControl.selectedSegmentIndex == 1 {
             user.isMetric = false
         }
-        
+        UserManager.shared.SaveUser()
         updateCF()
         collectionView.reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserManager.shared.LoadUser()
         setupUI()
         navigationItem.titleView = searchBar
         searchBar.delegate = self
         setupLocationManager()
         temperatureSegmentedControl.selectedSegmentIndex = user.isMetric ? 0 : 1
         locationManager.startUpdatingLocation()
-        print("배경화면 변경 해놓기")
-        print("멘트 설정하기")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -317,13 +316,13 @@ class ViewController: UIViewController {
     func updateCF() {
         if user.isMetric == true {
             temperatureLabel.text = "\(nowWeather.temp)°"
-            highestTemperatureLabel.text = "\(nowTempMax)°"
-            lowestTemperatureLabel.text = "\(nowTempMin)°"
+            highestTemperatureLabel.text = "최고 \(nowTempMax)°"
+            lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
         }
         else {
             temperatureLabel.text = "\(nowWeather.temp*5/9+32)°"
-            highestTemperatureLabel.text = "\(nowTempMax*5/9+32)°"
-            lowestTemperatureLabel.text = "\(nowTempMin*5/9+32)°"
+            highestTemperatureLabel.text = "최고 \(nowTempMax*5/9+32)°"
+            lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9+32)°"
         }
     }
     
@@ -587,9 +586,17 @@ class ViewController: UIViewController {
                 nowTempMin = Int(tempMin!)
                 
                 self.locationLabel.text = user.city
-                self.temperatureLabel.text = "\(nowWeather.temp)°"
-                self.highestTemperatureLabel.text = "최고 \(nowTempMax)°"
-                self.lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
+                if user.isMetric == true {
+                    self.temperatureLabel.text = "\(nowWeather.temp)°"
+                    self.highestTemperatureLabel.text = "최고 \(nowTempMax)°"
+                    self.lowestTemperatureLabel.text = "최저 \(nowTempMin)°"
+                }
+                else {
+                    self.temperatureLabel.text = "\(nowWeather.temp*5/9+32)°"
+                    self.highestTemperatureLabel.text = "최고 \(nowTempMax*5/9+32)°"
+                    self.lowestTemperatureLabel.text = "최저 \(nowTempMin*5/9+32)°"
+                }
+                
                 weatherBackgroundName = weatherState
                 self.setBackgroundImage(weatherBackgroundName)
                 self.clothesItemsLabel.text = self.getClotheContent(nowWeather.temp)
@@ -757,7 +764,6 @@ class ViewController: UIViewController {
             .responseJSON { response in
                 switch response.result {
                 case .success(let value as [String: Any]):
-                    print("성공")
                     let json = JSON(value)
                     let results = json["results"]
                     let region = results[0]["region"]
@@ -765,7 +771,6 @@ class ViewController: UIViewController {
                     let name2 = region["area2"]["name"].stringValue
                     let name3 = region["area3"]["name"].stringValue
                     let name4 = region["area4"]["name"].stringValue
-                    print("\(name1) \(name2) \(name3) \(name4)")
                     DispatchQueue.main.async {
                         user.city = "\(name1) \(name2) \(name3) \(name4)"
                         self.locationLabel.text = user.city
@@ -812,7 +817,6 @@ extension ViewController: CLLocationManagerDelegate {
             getAddress(lat, lon)
             getNowWeather()
             getWeeklyWeather()
-            print("위도: \(latitude), 경도: \(longitude)")
         }
         locationManager.stopUpdatingLocation() // 위치 업데이트를 중단하여 사용자의 배터리를 절약하는 코드
     }
