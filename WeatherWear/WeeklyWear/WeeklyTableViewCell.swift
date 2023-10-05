@@ -285,6 +285,14 @@ extension WeeklyTableViewCell {
         else {
             groupNumber = 7
         }
+        //추가될 내용
+        groupNumber += user.coldSensibility
+        if groupNumber > 7 {
+            groupNumber = 7
+        }
+        else if groupNumber < 0 {
+            groupNumber = 0
+        }
         for i in 0..<itemgroup[groupNumber].count{
             if i == 0 || i == 2{
                 content += "\(itemgroup[groupNumber][i]), "
@@ -309,7 +317,6 @@ extension WeeklyTableViewCell {
         if content == "" {
             content = "작은 우산\n따듯한 음료\n"
         }
-        content.removeLast()
         content.removeLast()
         return content
     }

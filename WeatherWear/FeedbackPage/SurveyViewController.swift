@@ -72,12 +72,51 @@ class SurveyViewController: UIViewController {
         if selection != nil{
             print(selection!)
             let doneViewController = DoneViewController()
+            let groupNumber = getGroupNumber(nowWeather.temp)
+            user.coldSensibility = selection - groupNumber
             self.navigationController?.pushViewController(doneViewController, animated: true)
         }
         else {
             print("선택안함")
         }
         
+    }
+    
+    func getGroupNumber(_ tempToday: Int) -> Int {
+        var groupNumber = 0
+        if tempToday >= 28 {
+            groupNumber = 0
+        }
+        else if tempToday < 28 && tempToday >= 23 {
+            groupNumber = 1
+        }
+        else if tempToday < 23 && tempToday >= 20 {
+            groupNumber = 2
+        }
+        else if tempToday < 20 && tempToday >= 17 {
+            groupNumber = 3
+        }
+        else if tempToday < 17 && tempToday >= 12 {
+            groupNumber = 4
+        }
+        else if tempToday < 12 && tempToday >= 9 {
+            groupNumber = 5
+        }
+        else if tempToday < 8 && tempToday >= 5 {
+            groupNumber = 6
+        }
+        else {
+            groupNumber = 7
+        }
+        //추가될 내용
+        groupNumber += user.coldSensibility
+        if groupNumber > 7 {
+            groupNumber = 7
+        }
+        else if groupNumber < 0 {
+            groupNumber = 0
+        }
+        return groupNumber
     }
 }
 
