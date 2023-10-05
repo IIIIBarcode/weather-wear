@@ -104,7 +104,6 @@ class WeeklyWearViewController: UIViewController {
             user.isMetric = false
         }
         weakTable.reloadData()
-        print(user.isMetric)
     }
 }
 

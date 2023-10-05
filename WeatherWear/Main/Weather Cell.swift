@@ -59,7 +59,13 @@ class WeatherHourCell: UICollectionViewCell {
         hourLabel.text = "\(time)시"
         
         //기온 변경 작업
-        temperatureLabel.text = "\(weather.temp)°"
+        if user.isMetric == true {
+            temperatureLabel.text = "\(weather.temp)°"
+        }
+        else {
+            temperatureLabel.text = "\(weather.temp*5/9+32)°"
+        }
+        
         
         //날씨 아이콘 변경 작업
         switch weather.weather {

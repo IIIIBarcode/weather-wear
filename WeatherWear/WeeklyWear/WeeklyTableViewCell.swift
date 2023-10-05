@@ -229,7 +229,12 @@ extension WeeklyTableViewCell {
         endindex = date.index(date.startIndex, offsetBy: 10)
         let day = date.substring(with: startindex..<endindex)
         weekDate.text = "\(month)월 \(day)일"
-        minMax.text = "최고 \(weather1.temp)° 최저\(weather2.temp)°"
+        if user.isMetric == true {
+            minMax.text = "최고 \(weather1.temp)° 최저\(weather2.temp)°"
+        }
+        else {
+            minMax.text = "최고 \(weather1.temp*5/9+32)° 최저\(weather2.temp*5/9+32)°"
+        }
         amPercent.text = "\(weather1.pop)%"
         pmPercent.text = "\(weather2.pop)%"
         
