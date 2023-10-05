@@ -18,6 +18,6 @@ class UserInfo {
         self.coldSensibility = coldSensibility
     }
     
-}
+} 
 
 let user = UserInfo(isMetric: true, city: "서울특별시", coldSensibility: 0)

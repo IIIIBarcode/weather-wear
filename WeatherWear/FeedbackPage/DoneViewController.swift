@@ -22,7 +22,7 @@ class DoneViewController: UIViewController {
     
     
     func configureUI() {
-        setBackgroundImage(weatherBackgroundName)
+        setBackgroundImage(nowWeather.weather)
         self.navigationItem.hidesBackButton = true
 //        self.tabBarController?.tabBar.isHidden = true
         

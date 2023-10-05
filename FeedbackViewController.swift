@@ -19,7 +19,7 @@ class FeedbackViewController: UIViewController {
     
     
     func ConfigureUI() {
-        setBackgroundImage(weatherBackgroundName)
+        setBackgroundImage(nowWeather.weather)
         view.backgroundColor = .black
         let iconImage = UIImageView()
         view.addSubview(iconImage)
@@ -64,7 +64,7 @@ class FeedbackViewController: UIViewController {
         
         let clotheLabel = UILabel()
         view.addSubview(clotheLabel)
-        clotheLabel.text = "반팔, 얇은 셔츠\n 반바지, 면바지"
+        clotheLabel.text = getClotheContent(nowWeather.temp)
         clotheLabel.numberOfLines = 0
         clotheLabel.textColor = .systemBackground
         clotheLabel.font = UIFont.systemFont(ofSize: 13)
@@ -86,12 +86,12 @@ class FeedbackViewController: UIViewController {
         
         let accessoryLabel = UILabel()
         view.addSubview(accessoryLabel)
-        accessoryLabel.text = "우산, 우비\n 레인부츠"
+        accessoryLabel.text = getAccContent(nowWeather.weather)
         accessoryLabel.numberOfLines = 0
         accessoryLabel.textColor = .systemBackground
         accessoryLabel.font = UIFont.systemFont(ofSize: 13)
         let attrString2 = NSMutableAttributedString(string: accessoryLabel.text!)
-        paragraphStyle.lineSpacing = 10
+        paragraphStyle.lineSpacing = 5
         attrString2.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString2.length))
         accessoryLabel.attributedText = attrString2
         accessoryLabel.textAlignment = .center
@@ -191,6 +191,71 @@ class FeedbackViewController: UIViewController {
             showToast(message: "항목을 선택해주세요")
         }
     }
+    
+    func getClotheContent(_ tempToday: Int) -> String {
+        var content = ""
+        var groupNumber = 0
+        if tempToday >= 28 {
+            groupNumber = 0
+        }
+        else if tempToday < 28 && tempToday >= 23 {
+            groupNumber = 1
+        }
+        else if tempToday < 23 && tempToday >= 20 {
+            groupNumber = 2
+        }
+        
+        else if tempToday < 20 && tempToday >= 17 {
+            groupNumber = 3
+        }
+        else if tempToday < 17 && tempToday >= 12 {
+            groupNumber = 4
+        }
+        else if tempToday < 12 && tempToday >= 9 {
+            groupNumber = 5
+        }
+        else if tempToday < 8 && tempToday >= 5 {
+            groupNumber = 6
+        }
+        else {
+            groupNumber = 7
+        }
+        //추가될 내용
+        groupNumber += user.coldSensibility
+        if groupNumber > 7 {
+            groupNumber = 7
+        }
+        else if groupNumber < 0 {
+            groupNumber = 0
+        }
+        for i in 0..<itemgroup[groupNumber].count{
+            if i == 0 || i == 2{
+                content += "\(itemgroup[groupNumber][i]), "
+            }
+            else if i == 1 {
+                content += "\(itemgroup[groupNumber][i])\n "
+            }
+            else {
+                content += "\(itemgroup[groupNumber][i])"
+            }
+        }
+        return content
+    }
+    
+    func getAccContent(_ weatherBackgroundName: String) -> String {
+        var content = ""
+        for item in accessories {
+            if item.weatherType == weatherBackgroundName {
+                content += "\(item.name)\n"
+            }
+        }
+        if content == "" {
+            content = "작은 우산\n따듯한 음료\n"
+        }
+        content.removeLast()
+        return content
+    }
+    
     func showToast(message : String, font: UIFont = UIFont.systemFont(ofSize: 14.0)) {
             let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
             toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
