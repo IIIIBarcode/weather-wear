@@ -1,10 +1,14 @@
+<img src="https://github.com/IIIIBarcode/weather-wear/assets/85066307/9d345bef-b204-464a-b562-bde3e4f3d0ed" width="200"/>
+
 #          프로젝트 소개 : **WEATHER WEAR**           
 국내날씨를 기반으로 적합한 옷차림을 추천에 주는 어플리케이션 
-https://teamsparta.notion.site/7-IIII-f0ebca169d2b47c88b9ae08ef6db602e
+
+
+- https://teamsparta.notion.site/7-IIII-f0ebca169d2b47c88b9ae08ef6db602e
 ------
 
  ## WEATHER WEAR의 의미 ##
--날씨에 최적화된 옷차림과 아이템을 제안해 주는 서비스를 제공한다는 의미  
+- 날씨에 최적화된 옷차림과 아이템을 제안해 주는 서비스를 제공한다는 의미  
 
 ------
 
